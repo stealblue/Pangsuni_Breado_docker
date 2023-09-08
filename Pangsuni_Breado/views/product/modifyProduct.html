@@ -1,0 +1,11 @@
+{% extends 'layout.html' %}
+{% block body %}
+    <form method="post" action="/product/modify">
+        <p><label>번호 : </label><input name="p_no" value="{{product.p_no}}" readonly></p>
+        <p><label>이름 : </label><input name="p_name" value="{{product.p_name}}"></p>
+        <p><label>가격 : </label><input name="p_price" value="{{product.p_price}}"></p>
+        <p><label>설명 : </label><textarea name="p_desc" cols="100" rows="10">{{product.p_desc}}</textarea></p>
+        <p><label>이미지 : </label><input type="file" name="p_img"></p>
+        <p><button type="reset">취소</button><button type="submit">전송</button></p>
+    </form>
+{% endblock %}

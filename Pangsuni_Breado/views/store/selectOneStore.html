@@ -1,0 +1,238 @@
+{% extends 'layout.html' %}
+{% block style %}
+<style>
+    .main-container {
+        margin: 0;
+    }
+
+    #header {
+        position: fixed;
+        background-color: rgba(249, 250, 183);
+        z-index: 1000;
+        margin-top: -160px;
+        padding-top: 10px;
+    }
+
+    #header .logout-category {
+        font-size: 14px;
+    }
+
+    #header .logout {
+        margin-top: 10px;
+    }
+
+    #header .logo {
+        margin-top: 13px;
+        padding-top: 30px;
+    }
+
+    #header .logo a {
+        font-size: 30px;
+    }
+
+    #nav {
+        display: none;
+    }
+    .productContent{
+        width: 100%;
+        margin-top: 50px;
+    }
+
+    .productCnt,.p_result{
+        padding: 3px;
+        margin-top: 10px;
+        margin-left: 10px;
+        font-size: 18px;
+        text-align: center;
+    }
+
+    .p_result{
+        width: 150px;
+    }
+
+    .productItem{
+        display: flex;
+        padding: 10px;
+        margin: 0 auto;
+        justify-content: center;
+        margin-top: 100px;
+    }
+
+    .product_order{
+        margin: 0 auto;
+    }
+
+    .productPickup {
+        padding: 10px;
+    }
+
+    .productPickup select{
+        padding: 5px;
+    }
+
+    .productWarp {
+        margin: 0 auto;
+    }
+    .productItem img{
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        border: 10px solid rgba(215, 220, 188, 0.6);
+        display: block;
+        margin-top: 20px;
+    }
+
+    .productItem div{
+        margin-left: 50px;
+    }
+
+    #totalSum{
+        padding: 5px;
+        border: none;
+        margin-top: 10px;
+        font-size: 30px;
+        text-align: center;
+        width: 100px;
+    }
+
+    .p_price{
+        font-size: 20px;
+        font-weight: 600;
+        margin-top: 10px;
+    }
+
+    .storeDesc{
+        width: 80%;
+        margin: 0 auto;
+        margin-top: 10px;
+    }
+
+    .order-btn{
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 20px;
+        font-weight: 600;
+        background-color: var(--main-bg-color);
+        border-radius: 20px;
+        cursor: pointer;
+        transition: .3s;
+    }
+
+    .order-btn:hover{
+        background-color: var(--sub-bg-color);
+    }
+
+    .total-price{
+        margin-top: 20px;
+    }
+
+    .store-text {
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .p_desc{
+        margin-top: 10px;
+    }
+</style>
+{% endblock %}
+{% block body %}
+<div id="store-detail">
+    <!-- <h1>가게 상세정보</h1> -->
+    <div class="back-page" onclick="history.back()"><i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i> 돌아가기
+    </div>
+    <div>
+        <div class="store-name">{{stores.s_name}}</div>
+        <div class="s_addr"><i class="fa fa-map-marker" aria-hidden="true"></i> {{stores.s_addr}}</div><br><br>
+        <div class="store-pic"></div>
+        <div class="storeDesc">{{stores.s_desc}}</div>
+        <div class="productContent">
+            <form class="productWarp" method="post" action="/order/add">
+                <div class="productItem">
+                            {% for p in products %}
+                            <div>
+                                <input type="hidden" value="{{p.p_no}}" name="p_no">
+                                <p class="store-text">{{p.p_name}}</p>
+                                <p><img src="../../images/{{p.p_img}}" alt="메뉴 이미지"></p>
+                                <p class="p_desc">{{p.p_desc}}</p>
+                                <p class="p_price"><span>{{p.p_price}}</span>원</p>
+                                <p>수량<input type="number" max="100" min="0" class="productCnt" name="o_cnt"></p>
+
+                                <p><label>총 금액 </label><input class="p_result" type="number" readonly></p>
+                            </div>
+<!--                    <hr>-->
+                    {% endfor %}
+                </div> <br><br>
+                <div class="product_order">
+                <div class="productPickup">
+                    픽업 가능 날짜
+                    <select name="o_pickup_dt">
+                        <option value="1"> + 1일</option>
+                        <option value="2"> + 2일</option>
+                        <option value="3"> + 3일</option>
+                        <option value="4"> + 4일</option>
+                        <option value="5"> + 5일</option>
+                        <option value="6"> + 6일</option>
+                        <option value="7"> + 7일</option>
+                    </select>
+                </div>
+                <div class="productSum">
+                    <label class="total-price">총 금액 </label>
+                    <p><input type="number" id="totalSum" readonly>원</p>
+                </div>
+                <div class="productRes">
+                    <button type="submit" class="order-btn">예약하기</button><br><br>
+                </div>
+            </div>
+            </form>
+
+        </div> <br><br><br>
+        <div id="map" style="width: 80%; height: 400px"></div>
+        <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+        <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey={{mapAPI}}&libraries=services"></script>
+    </div>
+</div>
+<script>
+    const p_cnt = document.querySelectorAll('.productCnt');
+    p_cnt.forEach((target) => {
+        target.addEventListener('change', function () {
+            const price = this.parentNode.previousSibling.previousSibling.firstChild.textContent;
+            const result = this.parentNode.nextSibling.nextSibling.firstChild.nextSibling;
+            result.value = Number(this.value * price);
+            const priceArr = document.querySelectorAll('.p_result');
+            let sum = 0;
+            for (let p of priceArr) {
+                sum += Number(p.value);
+            }
+            const resultSum = document.querySelector('#totalSum');
+            resultSum.value = sum;
+        })
+    })
+</script>
+<script>
+    const store_pic = document.querySelector('.store-pic');
+    store_pic.style.backgroundImage = "url('../../images/{{stores.s_img}}')";
+    const mapContainer = document.getElementById('map'); // 지도를 표시할 div
+    const mapOption = {
+        center: new kakao.maps.LatLng(35.861292438004945, 128.5562526030231), // 지도의 중심좌표
+        level: 3 // 지도의 확대 레벨
+    };
+    const map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+    const geocoder = new kakao.maps.services.Geocoder(); // 주소-좌표 변환 객체를 생성합니다
+    const storeAddress = document.querySelector('.s_addr').textContent; // 주소를 가져오기 위함
+    geocoder.addressSearch(storeAddress, function (result, status) { // 주소로 좌표를 검색합니다
+        if (status === kakao.maps.services.Status.OK) { // 정상적으로 검색이 완료됐으면
+            const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+            const marker = new kakao.maps.Marker({ // 결과값으로 받은 위치를 마커로 표시합니다
+                map: map,
+                position: coords
+            });
+            const infowindow = new kakao.maps.InfoWindow({
+                content: '<div style="width:150px;text-align:center;padding:6px 0;">{{stores.s_name}}</div>' // 인포윈도우로 장소에 대한 설명을 표시합니다
+            });
+            infowindow.open(map, marker);
+            map.setCenter(coords); // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+        }
+    });
+</script>
+{% endblock %}

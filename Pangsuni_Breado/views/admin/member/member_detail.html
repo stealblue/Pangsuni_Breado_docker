@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<style>
+  body {
+    margin-bottom: 50px;
+  }
+
+  * {
+    list-style: none;
+    text-decoration: none;
+    margin: 0 auto;
+  }
+
+  #member-detail h5 {
+    text-align: center;
+    font-size: 26px;
+    margin: 30px 0;
+  }
+
+  #member-detail .user-table,
+  tr,
+  td {
+    border: 1px solid #888;
+    border-collapse: collapse;
+    text-align: center;
+  }
+
+  td {
+    padding: 10px 0;
+  }
+
+  #member-detail .user-table {
+    width: 80%;
+  }
+
+
+  #member-detail .order-list ul {
+    display: flex;
+  }
+
+  #member-detail .order-list ul {
+    text-align: center;
+  }
+
+  #member-detail .member-o-title {
+    display: flex;
+    border-bottom: 1px solid #333;
+  }
+
+  #member-detail .member-o-title li {
+    text-align: center;
+    padding: 10px 0;
+  }
+
+  #member-detail .order-con {
+    border-bottom: 1px solid rgba(191, 191, 191, 0.7);
+  }
+
+  #member-detail .order-con li {
+    padding: 5px 0;
+  }
+
+  .m-order {
+    width: 90%;
+  }
+
+  .px100 {
+    width: 100px;
+  }
+
+  .px150 {
+    width: 150px;
+  }
+
+  .px200 {
+    width: 200px;
+  }
+
+  .grey {
+    background-color: rgba(191, 191, 191, 0.7);
+  }
+
+  .pclose-btn {
+    display: block;
+    padding: 5px 10px;
+    background-color: #333;
+    color: #fff;
+    margin-top: 30px;
+  }
+</style>
+
+<body>
+  <div id="member-detail">
+
+    <h5>회원정보</h5>
+    <table class="user-table">
+      <tbody>
+        <tr>
+          <td class="td-name grey">이름</td>
+          <td class="user-name"></td>
+          <td class="td-name grey">아이디</td>
+          <td class="user-id"></td>
+        </tr>
+        <tr>
+          <td class="td-name grey">전화번호</td>
+          <td class="user-tel"></td>
+          <td class="td-name grey">이메일</td>
+          <td class="user-email"></td>
+        </tr>
+        <tr>
+          <td class="td-name grey">회원등급</td>
+          <td class="user-grade"></td>
+          <td class="td-name grey">가입날짜</td>
+          <td class="user-date"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h5>주문정보</h5>
+    <div class="m-order">
+      <ul class="member-o-title">
+        <li class="px100">주문번호</li>
+        <li class="px150">예약날짜</li>
+        <li class="px150">픽업날짜</li>
+        <li class="px150">제품</li>
+        <li class="px150">가격</li>
+      </ul>
+
+      <div class="order-list">
+      </div>
+    </div>
+
+    <button class="pclose-btn" onclick="WinClose();">닫기</button>
+
+  </div>
+
+
+  {% block script %}
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script> -->
+  <script>
+    axios.post(`/admin/member/detail/{{u_no}}`)
+      .then((res) => {
+        if (res.status === 200) {
+          const rDate = new Date(res.data.users.u_reg_dt).toLocaleDateString();
+          console.log("detailorder---->", res.data.userdetailorder);
+          console.log("detail---->", res.data.users);
+          console.log("detail---->", res.data.order);
+          document.querySelector('.user-name').innerHTML = (res.data.users.u_name)
+          document.querySelector('.user-id').innerHTML = (res.data.users.u_id)
+          document.querySelector('.user-tel').innerHTML = (res.data.users.u_tel)
+          document.querySelector('.user-email').innerHTML = (res.data.users.u_email)
+          document.querySelector('.user-grade').innerHTML = (res.data.users.u_grade)
+          document.querySelector('.user-date').innerHTML = (rDate)
+          console.log("userOrder---->", res.data.order);
+
+
+          const list = document.querySelector('.order-list');
+          list.innerHTML = '';
+          for (let order of res.data.order) {
+            // console.log('회원번호 : ', order.p_no_product.p_desc);
+            const order_con = document.createElement('ul');
+            const regDate = new Date(order.o_reg_dt).toLocaleDateString(); // date 값을 보기 좋게 format하기 위함
+            const pickupDate = new Date(order.o_pickup_dt).toLocaleDateString();
+            order_con.className = 'order-con';
+            order_con.innerHTML = `<li class="px100">${order.o_no}</li>
+                                   <li class="px150">${regDate}</li>
+                                  <li class="px150">${pickupDate}</li>
+                                  <li class="px150">${order.p_no_product.p_name}</li>
+                                  <li class="px150">${order.p_no_product.p_price}</li>
+                                        `;
+            list.append(order_con);
+          }
+        }
+
+
+      }).catch((error) => {
+        console.error(error);
+      })
+
+    function WinClose()
+    {
+      window.open('', '_self').close();
+    }
+  </script>
+  {% endblock %}
+
+</body>
+
+</html>

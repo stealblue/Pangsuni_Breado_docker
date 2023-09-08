@@ -1,0 +1,80 @@
+{% extends 'layout.html' %}
+{% block style %}
+<style>
+h1 {
+    color: #4b907a;
+}
+
+.admin-modify-board {
+    /*width: 1000px;*/
+    padding: 20px;
+    text-align: center;
+    /*background-color: #fdf4e3;*/
+    /*opacity: 0.5;*/
+}
+
+.b_content {
+    width: 500px;
+    height: 150px;
+}
+
+.modifyBtn {
+    background-color: orange;
+    padding: 8px 15px;
+    border-radius: 5px;
+    color: black;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+}
+
+.b_title {
+    width: 500px;
+}
+
+input,select,textarea{
+        padding: 10px;
+        font-size: 16px;
+        text-align: left;
+        margin-left:10px;
+    }
+
+
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="admin-modify-board">
+    <h2>관리자 게시판 수정창</h2>
+    <!--<form method="post">-->
+        <input type="hidden" name="b_no" value="{{board.b_no}}">
+        <p><label>제목 </label><input name="b_title" class="b_title" value="{{board.b_title}}"></p><br>
+        <p><label>내용 </label><textarea name="b_content" class="b_content">{{board.b_content}}</textarea></p><br>
+        <p><button class="modifyBtn">수정</button></p>
+</div>
+<!--</form>-->
+{% endblock %}
+
+{% block script %}
+<script>
+    const btn = document.querySelector('.modifyBtn');
+    btn.addEventListener('click', async ()=>{
+        const b_no = document.querySelector('input[name="b_no"]').value;
+        const b_title = document.querySelector('input[name="b_title"]').value;
+        const b_content = document.querySelector('textarea[name="b_content"]').value;
+        await axios.post('/admin/board/modify',{b_no,b_title,b_content})
+            .then((response)=>{
+                console.log(response.data);
+                if(response.data.msg === 'success'){
+                    //이동
+                    console.log('들어왔다');
+                    location.replace('/admin/board');
+                }
+            })
+            .catch((err)=>{
+                console.error(err);
+            })
+    })
+</script>
+{% endblock %}
+

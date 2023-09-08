@@ -1,0 +1,99 @@
+body {
+  /* padding: 50px; */
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+#login {
+  text-align: center;
+}
+
+#login label {
+  margin-right: 10px;
+  font-size: 16px;
+}
+
+#login input {
+  padding: 15px 25px;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+#login .login-input .id-input {
+  margin-left: 13px;
+}
+
+#login .login-input {
+  margin-top: 20px;
+}
+
+#login .btn:hover {
+  background-color: #ff7f00;
+}
+
+#login .login-text{
+  margin-top: 20px;
+}
+
+#login .login-btn {
+  border-radius: 5px;
+  margin-top: 5px;
+  font-size: 20px;
+  font-weight: 600;
+  padding: 5px 20px;
+  background-color: #ffd56f;
+  transition: 0.4s;
+  cursor: pointer;
+}
+
+#login p {
+  margin-top: 30px;
+}
+
+#login .join-btn,
+.forget-btn {
+  border-radius: 20px;
+  margin-top: 15px;
+  font-size: 16px;
+  padding: 8px 40px;
+  background-color: #ffd56f;
+  transition: 0.4s;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+#join {
+  text-align: center;
+  margin-top: 70px;
+}
+
+#join .join-input {
+  margin-top: 30px;
+}
+
+#join label {
+  font-size: 20px;
+  display: block;
+  margin-top: 20px;
+}
+
+#join input {
+  display: block;
+  margin: 0 auto;
+  padding: 10px 50px;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+#join .btn {
+  padding: 10px 20px;
+  border-radius: 10px;
+  margin-top: 30px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.pagen {
+  width: 400px;
+  display: flex;
+  justify-content: space-around;
+}

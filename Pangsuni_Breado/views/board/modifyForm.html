@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div id="qna-write">
+  <form id ="board_form" action="/board/modify" method="post"><br><br>
+    <div class="input-group">
+      <label></label>
+      <input name="bt_no" value="{{boards.bt_no}}" readonly type="hidden"><br><br><br>
+      <h1>글수정</h1><br>
+    </div>
+    <div class="input-group">
+      <label>작성자</label>
+      <input name="b_no" value="{{boards.b_no}}" type="hidden">
+      <input name="u_id" value="{{user.u_id}}" readonly><br><br>
+    </div>
+    <div class="input-group">
+      <label>제&nbsp&nbsp&nbsp목</label>
+      <input name="b_title" class="b_title" maxlength="10" value="{{boards.b_title}}"><br><br>
+    </div>
+    <div class="input-group">
+      <label>내&nbsp&nbsp&nbsp용</label>
+      <textarea name="b_content" class="b_content">{{boards.b_content}}</textarea>
+      <br><br>
+    </div>
+    <p><button type="submit" class="write-btn">게시판 글 수정하기</button></p>
+    <br><br><br>
+  </form>
+</div>
+
+{% endblock %}

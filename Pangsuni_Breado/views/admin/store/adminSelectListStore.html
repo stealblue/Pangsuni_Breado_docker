@@ -1,0 +1,168 @@
+{% extends 'admin/admin.html' %} {% block body %}{% block style %}
+<style>
+  .category5 {
+    background-color: #222;
+  }
+  .category5 a {
+    color: #fff;
+  }
+  .page{
+      display: inline;
+      margin: 10px;
+  }
+  #admin-store .store-title{
+    display: flex;
+    border-bottom: 2px solid #333;
+    margin-top: 30px;
+  }
+
+  #admin-store .store-title li{
+    text-align: center;
+    padding: 15px 0;
+    font-weight: 500;
+  }
+
+  #admin-store .storeList ul {
+    display: flex;
+    border-bottom: 1px solid #888;
+  }
+
+  #admin-store .storeList ul li{
+    text-align: center; 
+    padding: 10px 0;
+    line-height: 35px;
+  }
+
+  #admin-store .store-container{
+    width: 80%;
+  }
+
+  #admin-store .btn{
+    padding: 5px 10px;
+    background-color : transparent;
+    transition: .3s;
+    cursor: pointer;
+  }
+
+  #admin-store .btn:hover{
+    background-color: #333;
+  }
+
+  #admin-store .btn:hover a{
+    color: #fff;
+  }
+
+  .addStoreBtn{
+    padding: 5px 10px;
+    background-color : #333;
+    transition: .3s;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 10px;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .addStoreBtn:hover{
+    background-color: #fff;
+    color: #333;
+  }
+</style>
+{% endblock %}
+<div id="admin-store">
+<h2>스토어 관리</h2>
+<button class="addStoreBtn">추가</button>
+<ul class="store-title">
+        <li class="sort px70" value="s_no">가게 번호</li>
+        <li class="sort px70" value="r_no_region.r_name">지역 이름</li>
+        <li class="sort px200" value="s_name">가게 이름</li>
+        <li class="px350">가게 주소</li>
+        <li class="px100">가게 번호</li>
+        <li class="px100">삭제</li>
+    </ul>
+    <div class="storeList"></div>
+
+<ul class="pageContent"></ul>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    const list = document.querySelector('.storeList');
+    const pageContent = document.querySelector('.pageContent');
+    const addStoreBtn = document.querySelector('.addStoreBtn');
+    function listRender(page, sort) {
+        list.innerHTML = '';
+        const currentPage = (page ? page : 1);
+        const listSort = (sort? sort: 's_no');
+        return axios
+            .get(`/admin/store/selectList?page=${currentPage}&sort=${listSort}`)
+            .then((response) => {
+                pageContent.innerHTML='';
+                for (let store of response.data.stores.rows) {
+                    const qna_con = document.createElement('ul');
+                    qna_con.className = 'qna-con';
+                    qna_con.innerHTML = `<li class="px70">${store.s_no}</li>
+                                         <li class="px70">${store.r_no_region.r_name}</li>
+                                         <li class="px200"><a href="/admin/store/selectOne/${store.s_no}">${store.s_name}</a></li>
+                                         <li class="px350">${store.s_addr}</li>
+                                         <li class="px100">${store.s_tel}</li>
+                                         <li class="px100"><button class="btn" onclick="deleteStore(${store.s_no})">삭제</button></li>`;
+                    list.append(qna_con);
+                }
+                pageNavigation(response.data);
+            })
+            .catch((err) => {
+                pageContent.innerHTML='검색결과가 없어요';
+                console.error(err);
+            })
+    }
+
+    function pageNavigation(response){
+        const currentPage = Number(response.currentPage);
+        const num = response.num;
+        console.log('페이지네이션 확인 :', num);
+        if(response.num[0]> 10){
+            const prev = document.createElement('li');
+            prev.setAttribute('data-page',`${(response.checkNum-9)}`);
+            prev.className = 'page';
+            prev.innerHTML = 'prev';
+            pageContent.append(prev);
+        }
+        for(let no of num){
+            const pageNav = document.createElement('li');
+            pageNav.setAttribute('data-page', `${no}`);
+            pageNav.setAttribute('onclick', `listRender(${no})`);
+            pageNav.className = 'page';
+            pageNav.innerHTML=`${Number(no)}`;
+            pageContent.append(pageNav);
+        }
+        if((currentPage+10 < response.stores.count)&& (num.length == 10)){
+            const next =document.createElement('li');
+            next.setAttribute('data-page',`${(response.checkNum+11)}`);
+            next.className = 'page';
+            next.innerHTML = 'prev';
+            pageContent.append(next);
+        }
+    }
+
+    function deleteStore (s_no){
+        axios.post('/admin/store/delete',{s_no})
+            .then((response)=>{
+                console.log('성공');
+                console.log(response.data);
+                listRender();
+            })
+            .catch((err)=>{
+                console.log('실패');
+                console.log(err);
+                listRender();
+            })
+    }
+
+    addStoreBtn.addEventListener('click', function (){
+        window.location.href='/admin/store/add';
+    })
+
+    listRender();
+</script>
+{% endblock %}

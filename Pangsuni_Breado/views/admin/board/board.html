@@ -1,0 +1,195 @@
+{% extends 'admin/admin.html' %}
+{% block style %}
+
+<style>
+    .category4 {
+        background-color: #222;
+    }
+
+    .category4 a {
+        color: #fff;
+    }
+
+    #admin-board .board-title {
+        display: flex;
+        border-bottom: 2px solid #333;
+        margin-top: 30px;
+    }
+
+    #admin-board .board-title li {
+        text-align: center;
+        padding: 15px 0;
+    }
+
+    #admin-board .boardList ul {
+        display: flex;
+        border-bottom: 1px solid #888;
+    }
+
+    #admin-board .boardList ul li {
+        text-align: center;
+        padding: 10px 0;
+        line-height: 35px;
+    }
+
+    #admin-board .board-container {
+        width: 80%;
+    }
+
+    #admin-board button .btn {
+        /*padding: 5px 10px;*/
+        background-color: transparent;
+        transition: .3s;
+        cursor: pointer;
+    }
+
+    #admin-board .btn:hover {
+        background-color: #333;
+        color: #fff;
+    }
+
+    #admin-board .btn a {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    #admin-board .btn a:hover {
+        color: #fff;
+    }
+
+    .px50 {
+        width: 50px;
+    }
+
+    .px80 {
+        width: 80px;
+    }
+
+    .px100 {
+        width: 100px;
+    }
+
+    .px150 {
+        width: 150px;
+    }
+
+    .px200 {
+        width: 200px;
+    }
+
+    #admin-board .btn {
+        padding: 5px 10px;
+    }
+
+</style>
+{% endblock %}
+{% block body %}
+<div id="admin-board">
+    <h2>게시판 관리</h2>
+    <br>
+    <div class="board-container">
+        <ul class="board-title">
+            <li class="px80">게시글번호</li>
+            <li class="px80">게시판타입</li>
+            <li class="px100">유저아이디</li>
+            <li class="px150">제목</li>
+            <li class="px200">작성시간</li>
+            <li class="px50">조회수</li>
+            <li class="px80">수정</li>
+            <li class="px80">삭제</li>
+        </ul>
+        <div class="boardList">
+        </div>
+    </div>
+</div>
+<ul class="pageContent"></ul>
+<div>
+    <!--    <button class="write"><a href="/board/qnaadd/{{bt_no}}">글쓰기</a></button>-->
+    <p>
+        <button type="submit" class="write-btn"><a href="/admin/board/add">게시판 글 등록하기</a></button>
+    </p>
+    <!--    <button>글쓰기</button>-->
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    const list = document.querySelector('.boardList'); // 리스트를 담기 위해 불러옴
+    const pageContent = document.querySelector('.pageContent'); // 페이지네비게이션 부분
+    function listRender(page) { // 리스트를 출력하기 위한 function
+        list.innerHTML = '';
+        const currentPage = (page ? page : 1);
+        return axios
+            .get(`/admin/board/selectList/?page=${currentPage}`) // 실행부분
+            .then((response) => { // 성공했을시 수행됨
+                pageContent.innerHTML = '';
+                for (let board of response.data.board.rows) {
+                    const regDate = new Date(board.b_reg_dt).toLocaleDateString(); // date 값을 보기 좋게 format하기 위함
+                    const qna_con = document.createElement('ul');
+                    qna_con.className = 'qna-con';
+                    qna_con.innerHTML = `<li class="px80">${board.b_no}</li>
+                                         <li class="px80">${board.bt_no}</li>
+                                         <li class="px100">${board.u_no_user.u_id}</li>
+                                         <li class="px150"><a href="/admin/board/selectOne/${board.b_no}?bt_no=${board.bt_no}">${board.b_title}</a></li>
+                                         <li class="px200">${regDate}</li>
+                                         <li class="px50">${board.b_cnt}</li>
+                                         <li class="px80"><button class="btn"><a href="/admin/board/modify/${board.b_no}">수정</a></button></li>
+                                         <li class="px80"><button class="btn" onclick="deleteProduct(${board.b_no})"><i class="fa-solid fa-trash-can"></i></button></li>`;
+                    list.append(qna_con);
+                }
+                pageNavigation(response.data);
+            })
+            .catch((err) => { // 실패했을시 수행됨
+                pageContent.innerHTML = '검색결과가 없어요';
+                console.error(err);
+            })
+    }
+
+    function pageNavigation(response) {
+        const currentPage = Number(response.currentPage);
+        const num = response.num;
+        if (response.num[0] > 10) {
+            const prev = document.createElement('li');
+            prev.setAttribute('data-page', `${(response.checkNum - 9)}`);
+            prev.setAttribute('onclick', `listRender(${(response.checkNum - 9)})`);
+            prev.className = 'page';
+            prev.innerHTML = 'prev';
+            pageContent.append(prev);
+        }
+        for (let no of num) {
+            const pageNav = document.createElement('li');
+            pageNav.setAttribute('data-page', `${no}`);
+            pageNav.setAttribute('onclick', `listRender(${no})`);
+            pageNav.className = 'page';
+            pageNav.innerHTML = `${Number(no)}`;
+            pageContent.append(pageNav);
+        }
+        if ((currentPage + 10 < response.board.count) && (num.length == 10)) {
+            const next = document.createElement('li');
+            next.setAttribute('data-page', `${(response.checkNum + 11)}`);
+            next.setAttribute('onclick', `listRender(${(response.checkNum + 11)})`);
+            next.className = 'page';
+            next.innerHTML = 'next';
+            pageContent.append(next);
+        }
+    }
+
+    function deleteProduct(b_no) {
+        axios.post('/admin/board/delete', {b_no})
+            .then((response) => {
+                console.log('성공');
+                console.log(response.data);
+                listRender();
+            })
+            .catch((err) => {
+                console.log('실패');
+                console.log(err);
+                listRender();
+            })
+    }
+
+    listRender();
+</script>
+{% endblock %}
+

@@ -1,0 +1,90 @@
+{% extends 'admin/admin.html' %} {% block body %} {% block style %}
+<style>
+    .category1 {
+        background-color: #222;
+    }
+
+    .category1 a {
+        color: #fff;
+    }
+    /*input[type='file']{*/
+    /*    display: none;*/
+    /*}*/
+</style>
+{% endblock %}
+<h2>가게상세화면</h2>
+<form method="post" enctype="multipart/form-data">
+    <input type="hidden" name="s_no" value="{{store.s_no}}" class="store">
+    <p><label>이미지 : </label><img src="../../../images/{{store.s_img}}" class="preview"><input type="file" name="s_img" class="previewBtn"></p>
+    <p><label>이름 : </label><input name="s_name" value="{{store.s_name}}" class="store"></p>
+    <p><label>지역 : </label><select name="r_no" class="store">
+        {% for region in regions %}
+        {% if region.r_no == store.r_no %}
+        <option value="{{region.r_no}}" selected>{{region.r_name}}</option>
+        {% else %}
+        <option value="{{region.r_no}}">{{region.r_name}}</option>
+        {% endif %}
+        {% endfor %}
+    </select></p>
+    <p><label>설명: </label><textarea name="s_desc" class="store">{{store.s_desc}}</textarea></p>
+    <p><label>주소 : </label><input name="s_addr" value="{{store.s_addr}}" class="store"></p>
+    <p><label>전화번호 : </label><input name="s_tel" value="{{store.s_tel}}" class="store"></p>
+    <p>
+        <button>수정</button>
+    </p>
+</form>
+{% endblock %}
+{% block script %}
+<script>
+    const form = document.querySelector('form');
+    const preview = document.querySelector('.preview');
+    const previewBtn = document.querySelector('.previewBtn');
+    previewBtn.addEventListener('change', ()=>{
+        const changeImg = URL.createObjectURL(previewBtn.files[0]);
+        preview.src=changeImg;
+    })
+    form.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        console.log('들어왔나');
+        if(confirm('수정할까요?')){
+
+        }else{
+            return;
+        }
+        const formData = new FormData();
+        const s_no = document.querySelector('input[name="s_no"]').value;
+        const s_name = document.querySelector('input[name="s_name"]').value;
+        const s_img = document.querySelector('input[name="s_img"]').files[0];
+        const r_no = document.querySelector('select[name="r_no"]').value;
+        const s_desc = document.querySelector('textarea[name="s_desc"]').value;
+        const s_tel = document.querySelector('input[name="s_tel"]').value;
+        const s_addr = document.querySelector('input[name="s_addr"]').value;
+        // console.log(s_img);
+        // console.log(`s_no : ${s_no}, s_name : ${s_name} , s_img : ${s_img} , r_no : ${r_no} , s_desc : ${s_desc} , s_tel : ${s_tel} , s_addr : ${s_addr}`);
+        if(typeof s_img !== undefined){
+            formData.append('s_img',s_img);
+        }
+        formData.append('s_no',s_no);
+        formData.append('s_name',s_name);
+        formData.append('r_no',r_no);
+        formData.append('s_desc',s_desc);
+        formData.append('s_tel',s_tel);
+        formData.append('s_addr',s_addr);
+        try{
+            console.log('try');
+            const response = await axios.post('/admin/store/modify', formData, {
+                headers:{
+                    'Content-Type': 'multipart/form-data'
+                },
+            });
+            // console.log(response.data);
+            console.log(response.data.msg);
+            if(response.data.msg === 'uploadSuccess'){
+                window.location.href='/admin/store';
+            }
+        }catch (err) {
+            console.error(err);
+        }
+    })
+</script>
+{% endblock %}

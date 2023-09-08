@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{{ title }}</title>
+
+    <link rel = "shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+    <!-- font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap" rel="stylesheet">
+
+    <!-- fontawesome -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- swiper -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+
+    <!-- css 연결 -->
+    <link rel="stylesheet" href="/stylesheets/index.css"/>
+    <link rel="stylesheet" href="/stylesheets/layout.css"/>
+    <link rel="stylesheet" href="/stylesheets/main.css"/>
+    <link rel="stylesheet" href="/stylesheets/style.css"/>
+    <link rel="stylesheet" href="/stylesheets/board.css"/>
+    <link rel="stylesheet" href="/stylesheets/mypage.css"/>
+    <link rel="stylesheet" href="/stylesheets/store.css"/>
+
+    <!-- admin css 연결 -->
+    <link rel="stylesheet" href="/stylesheets/admin.css"/>
+
+    {% block style %}{% endblock %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://kit.fontawesome.com/95ba01252b.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="main-container">
+    <!-- header -->
+    <header id="header">
+        <!-- <div class="search">
+            <p>검색창</p>
+            <input type="text" class="search-form"/>
+        </div> -->
+        <div class="logo">
+
+            <a href="/"><img src="" alt=""/>빵수니BREADO</a>
+        </div>
+
+        <div class="top_container">
+            <!-- <p>user => {{user.u_id}}</p> -->
+            {% if user and user.u_id %}
+            <div class="logout">
+                <div class="header-profile">환영합니다!<br><span>{{ user.u_name +  '님'}}</span></div>
+                <ul class="logout-category">
+                    {% if user.u_grade === '관리자' %}
+                    <a href="/admin" class="admin-page">관리자 페이지</a>
+                    {% endif %}
+                    <li><a href="/logout">로그아웃</a></li>
+                    <li class="mypage"><a href="/users/mypage">마이페이지</a></li>
+                </ul>
+            </div>
+            {% else %}
+
+            <div class="top-category">
+                <ul>
+                    <li><a href="/login">로그인</a></li>
+                    <li><a href="/join">회원가입</a></li>
+                    <!-- <li><a href="#">관리자로그인</a></li> -->
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+
+    </header>
+    <!-- //header -->
+
+    <ul id="nav">
+        <li><a href="/store">전국빵집</a></li>
+        <li><a href="/order/myPage">예약조회</a></li>
+        <li><a href="/board/list/2">QNA</a></li>
+        <li><a href="/board/list/1">공지사항</a></li>
+    </ul>
+
+    {% block body %}{% endblock %}
+    <!-- footer -->
+
+
+<footer id="footer">
+    <div>
+    <P>이용약관 &nbsp 개인정보처리방침 &nbsp 사업자정보확인</P>
+    <P>주식회사 팡수니브래두 | 대표: 이상원 | 개인정보관리책임자: 이상원 | 전화: 053-222-3333 | 이메일: pangsuni@pansuni.com</P>
+    <P>대구시 서구 서대구로 30 102호 | 사업자등록번호: 503-88-9999 | 통신판매: 2023-대구서구-0001호 | 호스팅제공자: 영남인재교육원</P>
+    <P>Copyright © PANGSUNI-BREADO All Rights Reserved</P>
+    </div>
+</footer>
+</div>
+<script>
+
+</script>
+
+{% block script %}{% endblock %}
+</body>
+</html>
+
+

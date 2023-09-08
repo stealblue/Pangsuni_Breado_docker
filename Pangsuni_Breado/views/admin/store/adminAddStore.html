@@ -1,0 +1,114 @@
+{% extends 'admin/admin.html' %}
+{% block style %}
+<style>
+    input,select,textarea{
+        padding: 10px;
+        font-size: 16px;
+        text-align: left;
+        margin-left:10px;
+    }
+
+    textarea{
+        display: block;
+        margin: 0 auto;
+        margin-top: 10px;
+    }
+    input[type="number"]{
+        width: 100px;
+    }
+    .b_content {
+        width: 500px;
+        height: 150px;
+    }
+    .b_title {
+        width: 500px;
+    }
+    .write-btn {
+        background-color: orange;
+        padding: 8px 15px;
+        border-radius: 5px;
+        color: black;
+        font-size: 15px;
+        font-weight: 600;
+        border: none;
+        transition: .3s;
+        cursor: pointer;
+    }
+
+    .write-btn:hover{
+        background-color: #f7d060;
+    }
+
+</style>
+{% endblock %}
+{% block body %}
+<h2>관리자 store 추가</h2><br>
+<form enctype="multipart/form-data" method="post" action="/admin/store/add">
+    <p><label>상호명</label><input name="s_name" class="b_title"></p><br>
+    <p><label>지역</label>
+        <select name="r_no">
+            {% for region in regions %}
+            <option value="{{region.r_no}}">{{region.r_name}}</option>
+            {% endfor %}
+        </select></p><br>
+    <p><label>설명</label><textarea name="s_desc" cols="50" rows="10" class="b_content"></textarea></p><br>
+    <p><label>주소</label><input name="s_addr" class="b_title"></p><br>
+    <p><label>전화번호</label>
+        <input type="number" maxlength="4" name="s_tel">-
+        <input type="number" maxlength="4" name="s_tel">-
+        <input type="number" maxlength="4" name="s_tel"></p><br>
+    <p><label>이미지</label><input type="file" name="s_img"></p><br>
+    <p><button type="submit" class="write-btn">전송</button></p>
+</form>
+<div class="preview-images">
+    <img id="preview">
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    const file = document.querySelector('input[name="s_img"]');
+    const preview = document.querySelector('#preview');
+    file.addEventListener('change', ()=>{
+        const previewImg = URL.createObjectURL(file.files[0]);
+        preview.src = previewImg;
+    })
+    ///////////////////////////
+    const form = document.querySelector('form');
+    const sName = document.querySelector('input[name="s_name"]');
+    const rNo = document.querySelector('select[name="r_no"]');
+    const sDesc = document.querySelector('textarea[name="s_desc"]');
+    const sAddr = document.querySelector('input[name="s_addr"]');
+    const sTel = document.querySelectorAll('input[name="s_tel"]');
+    const fileInput = document.querySelector('input[name="s_img"]');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        let concatStoreTel = '';
+        sTel.forEach((tel)=>{
+            concatStoreTel += tel.value;
+        })
+        console.log('concatStoreTel : ',concatStoreTel);
+        const formData = new FormData();
+        formData.append('s_name', sName.value);
+        formData.append('r_no', rNo.value);
+        formData.append('s_desc', sDesc.value);
+        formData.append('s_addr', sAddr.value);
+        formData.append('s_tel', concatStoreTel);
+        formData.append('s_img', fileInput.files[0]);
+        try {
+            const response = await axios.post('/admin/store/add', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            console.log(response.data);
+            alert(response.data.msg);
+            if(response.data.msg === 'uploadSuccess'){
+                window.location.href = '/admin/store';
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    });
+</script>
+{% endblock %}

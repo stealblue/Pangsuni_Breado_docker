@@ -1,0 +1,139 @@
+{% extends 'admin/admin.html' %}
+{% block style %}
+<style>
+    #preview {
+        width: 300px;
+        height: 200px;
+    }
+    #admin-product h2{
+        margin-top: 50px;
+    }
+
+    #admin-product .s_no{
+        padding: 10px 20px;
+        margin-top: 40px;
+        margin-left: 10px;
+    }
+
+
+    #admin-product input[type="number"]::-webkit-inner-spin-button{
+        -webkit-appearance: none;
+    }
+
+    #admin-product input{
+        padding: 15px;
+        margin-top: 20px;
+        margin-left: 10px;
+        width: 30%;
+        text-align: left;
+    }
+
+    #admin-product textarea{
+        margin-top: 8px;
+        height: 100px;
+    }
+    #admin-product .product-des{
+        display: block;
+        margin-top: 20px;
+    }
+    
+
+    #admin-product #file{
+        padding : 10px 0;
+        width: 20%;
+        margin-top: -5px;
+    }
+
+    #admin-product .btn{
+        margin-top: 30px;
+        padding : 10px 20px;
+    }
+
+    #admin-product .push-btn{
+        background-color: #333;
+        color: #fff;
+        margin-left: 20px;
+    }
+
+    #admin-product .push-btn:hover{
+        background-color: #fff;
+        color: #333;
+    }
+
+</style>
+{% endblock %}
+{% block body %}
+<div id="admin-product">
+
+<h2>상품등록</h2>
+<form method="post" enctype="multipart/form-data">
+    <p><label>가게 </label>
+        <select name="s_no" class="s_no">
+        {% for s in store %}
+        <option class="store" value="{{s.s_no}}">
+            {{s.s_name}}
+        </option>
+        {% endfor %}
+    </select></p>
+    <p><label>이름 </label><input name="p_name" placeholder="이름을 꼭 입력해주세요!" class="p_name"></p>
+    <p><label>가격 </label><input type="number" name="p_price" placeholder="가격을 꼭 입력해주세요!" class="p_price" maxlength="4"></p>
+
+    <p><label class="product-des">설명 </label><textarea cols="100" rows="20" name="p_desc" class="p_desc"></textarea></p>
+   
+    <p class="product-img"><label>이미지 : </label><input type="file" name="p_img" id="file" accept="image/*"></p>
+    <div class="preview-images">
+        <img id="preview">
+    </div>
+    <p>
+        <button type="reset" class="btn">취소</button>
+        <button type="submit" class="btn push-btn">등록</button>
+    </p>
+</form>
+
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    const file = document.querySelector('#file');
+    const preview = document.querySelector('#preview');
+    file.addEventListener('change', () => {
+        const previewImg = URL.createObjectURL(file.files[0]);
+        preview.src = previewImg;
+    })
+    ///////////////////////////
+    const form = document.querySelector('form');
+    const pName = document.querySelector('.p_name');
+    const pPrice = document.querySelector('.p_price');
+    const pDesc = document.querySelector('.p_desc');
+    const sNo = document.querySelector('.s_no');
+    const fileInput = document.querySelector('#file');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('p_no', null);
+        formData.append('p_name', pName.value);
+        formData.append('p_price', pPrice.value);
+        formData.append('p_desc', pDesc.value);
+        formData.append('s_no', sNo.value);
+        formData.append('p_img', fileInput.files[0]);
+        // for (const file of fileInput.files) {
+        //     formData.append('p_img', file);
+        // }
+        try {
+            const response = await axios.post('/product/test', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            console.log(response.data);
+            alert(response.data.msg);
+            if (response.data.msg === 'uploadSuccess') {
+                window.location.href = '/product';
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    });
+</script>
+{% endblock %}

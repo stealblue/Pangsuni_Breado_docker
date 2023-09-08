@@ -1,0 +1,129 @@
+{% extends 'layout.html' %}
+{% block body %}
+
+
+<!-- <h1>{{title}}</h1> -->
+
+
+
+
+<!-- slide -->
+<div class="swiper">
+    <!-- Additional required wrapper -->
+    <div class="swiper-wrapper">
+        <!-- Slides -->
+        <div class="swiper-slide"><img src="/images/main-slide1.jpg" alt=""></div>
+        <div class="swiper-slide"><img src="/images/main-slide2.jpg" alt=""></div>
+        <div class="swiper-slide"><img src="/images/main-slide3.jpg" alt=""></div>
+    </div>
+    <!-- If we need pagination -->
+    <div class="swiper-pagination"></div>
+
+    <!-- If we need navigation buttons -->
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
+
+    <!-- If we need scrollbar -->
+    <div class="swiper-scrollbar"></div>
+</div>
+<!-- //slide -->
+
+<!-- content -->
+<div id="content">
+    <h3 class="best-title">오늘의 BEST 빵집!</h3>
+    <!--best-->
+    <div class="best">
+        <!-- <div class="best-bread"><a href=""></a></div>
+        <div class="best-bread"><a href=""></a></div>
+        <div class="best-bread"><a href=""></a></div>
+        <div class="best-bread"><a href=""></a></div>
+        <div class="best-bread"><a href=""></a></div>
+        <div class="best-bread"><a href=""></a></div>
+        <div class="best-bread"><a href=""></a></div>
+        <div class="best-bread"><a href=""></a></div> -->
+    </div>
+    <!-- //best-->
+    <div class="con-banner">
+    <div class="main-banner"><img src="/images/main-banner.png" alt=""></div>
+    <div class="region-find" onclick="location.href='/store'">지역별 빵집 찾기<i class="fa fa-hand-o-right" aria-hidden="true"></i> </div> 
+</div>
+    <!-- <h3 class="review-title">빵수니브레두<br>REVIEW</h3> -->
+    <div class="review">
+        <div class="reiview-con"><a href="#"><img src="" alt=""></a></div>
+        <div class="reiview-con"><a href="#"><img src="" alt=""></a></div>
+        <div class="reiview-con"><a href="#"><img src="" alt=""></a></div>
+        <div class="reiview-con"><a href="#"><img src="" alt=""></a></div>
+        <div class="reiview-con"><a href="#"><img src="" alt=""></a></div>
+        <div class="reiview-con"><a href="#"><img src="" alt=""></a></div>
+    </div>
+</div>
+<!-- //content -->
+
+
+</div>
+
+<script>
+    var swiper = new Swiper(".swiper", {
+        loop: true,
+        spaceBetween: 30,
+        centeredSlides: true,
+        autoplay: {
+            delay: 4000,
+            disableOnInteraction: false,
+        },
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+        },
+        navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+        },
+    });
+
+function selectBestBread(){
+    const bestbread = document.querySelector('.best')
+   
+    axios.post('/') 
+        .then((res) => {
+            for(let i =0; i < res.data.storemain.length; i++) {
+                console.log(res.data.storemain[i]);
+               
+                const bread = document.createElement('div');
+                bread.className = 'bread'
+                bread.innerHTML = `
+                           <!-- <a href="/store/detail/${res.data.storemain[i].s_no}"><img src="images/${res.data.storemain[i].s_img}" alt="${res.data.storemain[i].s_name}의 이미지"  class="store-img"></a> -->
+                           <img src="images/${res.data.storemain[i].s_img}" alt="${res.data.storemain[i].s_name}의 이미지" onclick="location.href='/store/detail/${res.data.storemain[i].s_no}'" class="store-img">
+                            <div><a href="/store/detail/${res.data.storemain[i].s_no}" class="btn">상세보기</a></div>
+                            <div class="best-des">
+                            <p class = "store-name">${res.data.storemain[i].s_name}</p>
+                            <p class = "store-addr">${res.data.storemain[i].s_addr}</p>
+                        `;
+
+                            // const bestImg = document.querySelector('.store-img')
+                            // bestImg.style.backgroundImage = "url('../../images/${res.data.storemain[i].s_img}')";
+                            bestbread.append(bread);
+
+            };
+        });
+    }
+    selectBestBread();
+
+    // if('{{user}}'){
+    //     (async ()=>{
+    //         await axios.get('/order/todayOrder/{{user.u_no}}')
+    //             .then((response)=>{
+    //                 console.log(response.data);
+    //                 alert(response.data);
+    //             })
+    //             .catch((err)=>{
+    //                 console.error(err);
+    //             })
+    //     })()
+    // }
+
+
+</script>
+
+
+{% endblock %}

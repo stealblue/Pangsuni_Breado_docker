@@ -1,0 +1,130 @@
+{% extends 'layout.html' %}
+{% block style %}
+<style>
+    *{
+        margin: 0 auto;
+    }
+    .qna-head {
+        background-color: #dfdfdf;
+    }
+    .qna-bg {
+        text-align: center;
+        margin: 0 auto;
+        margin-top: 40px;
+    }
+    .qna-table-size {
+        width: 80%;
+        padding: 20px;
+    }
+
+    h2{
+        text-align: center;
+    }
+
+</style>
+{% endblock %}
+{% block body %}
+
+<h2>게시판</h2>
+<input type="hidden" class="bt_no" value="{{bt_no}}">
+<div class="qna-bg">
+    <br>
+    <table class="qna-table-size">
+        <thead>
+        <tr class="qna-head">
+            <th>No</th>
+            <th>작성자</th>
+            <th>제목</th>
+            <th>등록일</th>
+            <th>조회수</th>
+        </tr>
+        </thead>
+        <tbody class="list"></tbody>
+    </table>
+        <ul class="pageContent"></ul> <br>
+    <div>
+        {% if bt_no != 1 %}
+        <button class="write-btn"><a href="/board/qnaadd/{{bt_no}}">글쓰기</a></button><br><br>
+        {% endif %}
+        <select class="searchType">
+            <option value="any">제목 + 내용</option>
+            <option value="b_title">제목</option>
+            <option value="b_content">내용</option>
+        </select>
+        <input class="keyword">
+        <button class="searchBtn">검색</button><br><br>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    const list = document.querySelector('.list');
+    const pageContent = document.querySelector('.pageContent');
+    const searchBtn = document.querySelector('.searchBtn');
+
+    function listRender(page, keyword, type) { // 게시물 리스트를 출력하는 function
+        list.innerHTML = '';
+        const bt_no = document.querySelector('.bt_no').value;
+        const currentPage = (page ? page : 1);
+        const searchKeyword = (keyword ? keyword : '');
+        const searchType = (type ? type : '');
+        return axios
+            .get(`/board/selectList2/${bt_no}?page=${currentPage}&keyword=${searchKeyword}&searchType=${searchType}`)
+            .then((response) => {
+                console.log('result : ', response.data);
+                pageContent.innerHTML='';
+                for (let store of response.data.board.rows) {
+                    const regDate = new Date(store.b_reg_dt).toLocaleDateString(); // date 값을 보기 좋게 format하기 위함
+                    const qna_con = document.createElement('tr');
+                    qna_con.className = 'qna-con';
+                    qna_con.innerHTML = `<td>${store.b_no}</td>
+                                         <td>${store.u_no_user.u_id}</td>
+                                         <td><a href="/board/view/${store.b_no}?bt_no={{bt_no}}">${store.b_title}</a></td>
+                                         <td>${regDate}</td>
+                                         <td>${store.b_cnt}</td>`;
+                    list.append(qna_con);
+                }
+                pageNavigation(response.data);
+            })
+            .catch((err) => {
+                pageContent.innerHTML='검색결과가 없어요';
+                console.error(err);
+            })
+    }
+
+    listRender();
+    function pageNavigation(response){
+        const currentPage = Number(response.currentPage);
+        const num = response.num;
+        if(response.num[0]> 10){
+            const prev = document.createElement('li');
+            prev.setAttribute('data-page',`${(response.checkNum-9)}`);
+            prev.className = 'page';
+            prev.innerHTML = 'prev';
+            pageContent.append(prev);
+        }
+        for(let no of num){
+            const pageNav = document.createElement('li');
+            pageNav.setAttribute('data-page', `${no}`);
+            pageNav.setAttribute('onclick', `listRender(${no})`);
+            pageNav.className = 'page';
+            pageNav.innerHTML=`${Number(no)}`;
+            pageContent.append(pageNav);
+        }
+        if((currentPage+10 < response.board.count)&& (num.length == 10)){
+            const next =document.createElement('li');
+            next.setAttribute('data-page',`${(response.checkNum+11)}`);
+            next.className = 'page';
+            next.innerHTML = 'prev';
+            pageContent.append(next);
+        }
+    }
+    searchBtn.addEventListener('click', function () {
+        const keyword = document.querySelector('.keyword').value;
+        const searchType = document.querySelector('.searchType').value;
+        listRender(null, keyword, searchType);
+    })
+
+</script>
+{% endblock %}
+

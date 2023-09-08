@@ -1,0 +1,78 @@
+
+ 
+
+{% extends 'layout.html' %} {% block body %}
+<style>
+  #header .top-category {
+    display: none;
+  }
+
+  #header .logo {
+    margin: 0 auto;
+    margin-top: 50px;
+  }
+
+  #header .logo a {
+    font-size: 30px;
+  }
+
+  #nav {
+    display: none;
+  }
+</style>
+
+
+<script>
+  $(document).ready(function () {
+    $(".login-btn").on("click", function () {
+      const u_id = $(".id-input").val();
+      const u_pwd = $(".pass_input").val();
+
+      axios.post('/login', 
+          { u_id, u_pwd },
+      )
+        .then((res) => {
+          console.log("axios1->", res);
+          console.log("axios2->", res.data.msg);
+          console.log("axios2->", res.data.fillteredUser.u_grade);
+          console.log("axios3->", res.status);
+          if (res.status  === 200 && res.data.fillteredUser.u_grade === '일반회원') {
+            location.href = "/";
+          }else if(res.status  === 200 && res.data.fillteredUser.u_grade === '관리자'){
+            location.href = "/admin";
+          }
+        })
+        .catch((error) => {
+          console.log("axios1ec->", error);
+          console.log("axios1ec->", error.code);
+            $(".login-text").text(`아이디또는 비밀번호를 확인해주세요.`);
+            $(".login-text").css("color", "red");
+        });
+    });
+  });
+</script>
+
+<div id="login">
+  <h2>로그인</h2>
+  <form action="/login" method="post" >
+    <div class="login-input">
+      <label>아이디</label>
+      <input class="id-input" name="u_id" placeholder="아이디를 입력하세요." />
+    </div>
+    <div class="login-input">
+      <label>비밀번호</label>
+      <input type="password" name="u_pwd" class="pass_input" placeholder="비밀번호를 입력하세요." />
+    </div>
+    <div class="login-text"></div>
+    <input type="button" class="btn login-btn" value="LOGIN"></input>
+  </form>
+  <p>아직 회원이 아니세요?</p>
+
+  <button id="join" type="button" class="btn join-btn" onclick="location.href='/join'">회원가입 하러가기</button>
+
+  <p>아이디,비밀번호를 잊으셨나요?</p>
+  <button id="forget" type="submit" class="btn forget-btn" onclick="window.open('/users/finduser','finduser','width=700 height=700 resizable=no toolbars=no menubar=no scrollbar=no')">아이디/비밀번호 찾기</button>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'layout.html' %} {% block body %}
+
+<div id="modify-mypage">
+  <h4>회원정보수정</h4>
+  <form action="/users/mypage/" method="post">
+    <ul class="mypage-list">
+      <li>
+        이름<br />
+        <p>{{user.u_name}}</p>
+      </li>
+      <li>
+        아이디<br />
+        <p>{{user.u_id}}</p>
+      </li>
+      <li>비밀번호<br /><input type="password" name="u_pwd" /></li>
+      <li>비밀번호 확인<br /><input type="password" name="re_pwd" /></li>
+      <li>이메일<br /><input type="email" value="{{user.u_email}}" name="u_email" /></li>
+      <li>전화번호<br /><input type="text" value="{{user.u_tel}}" name="u_tel" /></li>
+    </ul>
+    <button type="submit" class="btn user-update-btn">수정하기</button>
+  </form>
+</div>
+
+{% endblock %}

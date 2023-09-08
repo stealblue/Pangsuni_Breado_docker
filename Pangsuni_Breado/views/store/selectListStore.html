@@ -1,0 +1,77 @@
+{% extends 'layout.html' %}
+{% block style %}
+<style>
+    .clicked{
+        background-color: steelblue;
+    }
+</style>
+{% endblock %}
+{% block body %}
+<div id="store">
+    <h4>지역선택</h4>
+<ul class="region-list">
+{% for region in regions %}
+<li class="region" data-id="{{region.r_no}}">{{region.r_name}}</li>
+{% endfor %}
+</ul>
+<div id="regionStore">
+<!--    <h5>서울</h5>-->
+    {% for seoul in seoulStore %}
+    <div class="store">
+        <a href="/store/detail/{{seoul.s_no}}">
+            <p class="store-name">{{seoul.s_name}}</p>
+            <img class="store-img" src="images/{{seoul.s_img}}">
+            <p>{{seoul.s_addr}}</p>
+            <p>{{seoul.s_tel}}</p>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+</div>
+<!--<div id="map" style="width:400px;height:350px;"></div>-->
+{% endblock %}
+{% block script %}
+<script>
+    const regions = document.querySelectorAll('.region');
+    const regionStore = document.querySelector('#regionStore');
+    regions[0].style.backgroundColor ='var(--sub-bg-color)';
+    regions[0].style.color ='white';
+    regions.forEach((region) => {
+        region.addEventListener('click', function () {
+            const liLength = this.parentNode.childElementCount;
+            for(let i=0; i< liLength; i++){
+                this.parentNode.children[i].style.backgroundColor = 'white';
+                this.parentNode.children[i].style.color = 'black';
+            }
+            this.style.backgroundColor = 'var(--sub-bg-color)';
+            this.style.color = 'white';
+            const r_no = this.dataset.id;
+            try {
+                axios.post(`/store`, {r_no: r_no})
+                    .then((result) => {
+                        regionStore.innerHTML = '';
+                        // const regionName = document.createElement('h5');
+                        // regionName.innerHTML = this.textContent;
+                        // regionStore.append(regionName);
+                        for (let item of result.data.stores) {
+                            const store = document.createElement('div');
+                            store.className = 'store'
+                            store.innerHTML = `<a href="/store/detail/${item.s_no}">
+                                                <p class = "store-name">${item.s_name}</p>
+                                                <img class="store-img" src="images/${item.s_img}" alt="${item.s_name}의 이미지">
+                                                <p class="store-addr">${item.s_addr}</p><p>${item.s_tel}</p>
+                                               </a>`;
+                            regionStore.append(store);
+                        }
+                        ;
+                    });
+            } catch (e) {
+                console.error(e);
+            }
+        })
+    })
+    const bgChange = (r_name)=>{
+        console.log(r_name);
+    }
+</script>
+{% endblock %}

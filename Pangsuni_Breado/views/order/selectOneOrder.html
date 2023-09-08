@@ -1,0 +1,158 @@
+{% extends 'layout.html' %}
+{% block style %}
+<style>
+    *{
+        margin: 0 auto;
+    }
+
+    h1{
+        margin-top: 50px;
+    }
+
+    .pageHead {
+        background-color: #dfdfdf;
+    }
+    .pageBg {
+        text-align: center;
+    }
+    .orderTableSize {
+        padding: 20px;
+        width: 80%;
+    }
+    .pageContent {
+        display: flex;
+        width: 5%;
+        margin-top: 40px;
+    }
+    .orderList {
+        /*text-align: center;*/
+        /*margin: 0 auto;*/
+    }
+    .clickedPage{
+        color: red;
+    }
+</style>
+{% endblock %}
+{% block body %}
+<div class="pageBg">
+    <div><br>
+        <h1>{{user.u_id}}님 예약조회</h1>
+    </div>
+    <div>
+        <table class="orderTableSize">
+            <br>
+            <thead>
+            <tr class="pageHead">
+                <th>주문번호</th>
+                <th>가게이름</th>
+                <th>제품명</th>
+                <th>주문날짜</th>
+                <th>픽업날짜</th>
+                <th>갯수</th>
+                <th>삭제</th>
+            </tr>
+            </thead>
+            <tbody class="orderList">
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <ul class="pageContent"></ul>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    const list = document.querySelector('.orderList');
+    const pageContent = document.querySelector('.pageContent');
+    function listRender(page) { // 게시물 리스트를 출력하는 function
+        list.innerHTML = '';
+        const currentPage = (page ? page : 1);
+        return axios
+            .get(`/order/selectList/{{user.u_no}}?page=${currentPage}`)
+            .then((response) => {
+                console.log('result : ', response.data);
+                pageContent.innerHTML='';
+                for (let order of response.data.orders.rows) {
+                    const today = new Date().toLocaleDateString();
+                    const today2 = new Date(today).getTime();
+                    const regDate = new Date(order.o_reg_dt).toLocaleDateString(); // date 값을 보기 좋게 format하기 위함
+                    const pickupDate = new Date(order.o_pickup_dt).toLocaleDateString();
+                    const pickupDate2 = new Date(pickupDate).getTime();
+                    const qna_con = document.createElement('tr');
+                    qna_con.className = 'qna-con';
+                    qna_con.innerHTML = `<td>${order.o_no}</td>
+                                         <td>${order.p_no_product.s_no_store.s_name}</td>
+                                         <td>${order.p_no_product.p_name}</td>
+                                         <td>${regDate}</td>
+                                         <td class="pickupDate">${pickupDate}</td>
+                                         <td>${order.o_cnt}</td>`;
+                    if(today2 === pickupDate2){
+                        qna_con.style.backgroundColor = '#FC4F00';
+                    }
+                    if(today2 < pickupDate2) {
+                        const deleteBtn = document.createElement('td');
+                        deleteBtn.className='deleteOrder';
+                        deleteBtn.innerHTML = `<i class="fa-solid fa-trash-can" onclick="deleteOrder(${order.o_no},${currentPage})"></i>`;
+                        qna_con.append(deleteBtn);
+                    }
+                    qna_con.firstChild.style.textAlign = 'center';
+                    qna_con.lastChild.style.textAlign = 'center';
+                    list.append(qna_con);
+                }
+                pageNavigation(response.data);
+            })
+            .catch((err) => {
+                console.error(err);
+            })
+    }
+    function pageNavigation(response){
+        const currentPage = Number(response.currentPage);
+        const num = response.num;
+        if(response.num[0]> 10){
+            const prev = document.createElement('li');
+            prev.setAttribute('data-page',`${(response.checkNum-9)}`);
+            prev.className = 'page';
+            prev.innerHTML = 'prev';
+            pageContent.append(prev);
+        }
+        for(let no of num){
+            console.log('no : ', no);
+            const pageNav = document.createElement('li');
+            pageNav.setAttribute('data-page', `${no}`);
+            pageNav.setAttribute('onclick', `listRender(${no})`);
+            pageNav.className = 'page';
+            pageNav.innerHTML=`${Number(no)}`;
+            pageContent.append(pageNav);
+        }
+        if((currentPage+10 < response.orders.count)&& (num.length == 10)){
+            const next =document.createElement('li');
+            next.setAttribute('data-page',`${(response.checkNum+11)}`);
+            next.className = 'page';
+            next.innerHTML = 'next';
+            pageContent.append(next);
+        }
+    }
+
+    const deleteOrder =  async (o_no,page)=>{
+        console.log('o_no', o_no);
+        console.log('안되는가');
+        await axios.post(`/order/delete`,{o_no})
+            .then((response)=>{
+                if(response.data.msg === 'success'){
+                    listRender(page);
+                }
+            })
+            .catch((err)=>{
+                console.error(err);
+                listRender(page);
+            })
+    }
+
+    const selectedPage = (page) =>{
+
+    }
+
+    listRender();
+</script>
+{% endblock %}

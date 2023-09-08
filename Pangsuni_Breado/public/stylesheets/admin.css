@@ -1,0 +1,19 @@
+
+.admin-board {
+    list-style: none;
+    text-decoration: none;
+    color: #222;
+    padding: 0;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.admin-board .write-btn {
+    background-color: orange;
+    padding: 8px 15px;
+    border-radius: 5px;
+    color: black;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+}

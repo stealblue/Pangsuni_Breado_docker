@@ -1,0 +1,213 @@
+{% extends 'admin/admin.html' %}
+
+{% block body %}
+<div id="board-desc">
+    <h3>Q&A 게시판</h3>
+    <div class="title">제목</div>
+    <div class="qna-boardDetail-con">{{boards.b_title}}</div>
+    <div class="title">내용</div>
+    <div class="qna-boardDetail-con desc-con">{{boards.b_content}}</div>
+
+    {% if bt_no == 2 %}
+    <div class="comment">
+<!--        <div class="comment-title">댓글</div>-->
+        <!--
+        <ul class="comment-title-list">
+            <li class="px70">번호</li>
+            <li class="px70">작성자</li>
+            <li class="px150">내용</li>
+            <li class="px150">작성시간</li>
+            <li class="px150">수정시간</li>
+            <li class="px50">수정</li>
+            <li class="px50">삭제</li>
+        </ul> -->
+
+        <div class="list"></div>
+        <ul class="pageContent"></ul>
+    </div><br>
+    {% endif %}
+
+    <br><br>
+    {% if user %}
+    {% if bt_no == 2 %}
+<!--    <div id="qna-comments-bg">-->
+<!--        <input name="b_no" value="{{boards.b_no}}" readonly size="3" type="hidden">-->
+<!--        <input name="c_no" value="" readonly size="3" type="hidden">-->
+<!--        <div class="commentFormTitle">댓글쓰기</div><br>-->
+<!--        <div class="input-group">-->
+<!--            <input name="bt_no" value="{{bt_no}}" size="3" type="hidden"><br>-->
+<!--            &lt;!&ndash; <label>작성자 </label>&ndash;&gt;<span class="comment-user">{{user.u_id}}</span>-->
+<!--            <input type="hidden" name="u_no" value="{{user.u_no}}"><br><br>-->
+<!--            &lt;!&ndash; <label>내용</label><br> &ndash;&gt;-->
+<!--            <textarea cols="70" rows="1" name="c_content" class="b_content"></textarea>-->
+<!--            <p><button class="comments-btn" id="commentBtn">댓글저장</button></p>-->
+<!--        </div>-->
+
+
+<!--        {% if (boards.u_no === user.u_no) or (user.u_grade === '관리자') %}-->
+<!--        <div class="board-btn"></div>-->
+<!--        <button id="delete" value="{{i.b_no}}" class="btn delete"><a-->
+<!--                href="/board/delete/{{boards.b_no}}?bt_no={{bt_no}}">게시물삭제</a></button>-->
+<!--        <button id="modify" value="{{i.b_no}}" class="btn modify"><a-->
+<!--                href="/board/modify/{{boards.b_no}}">게시물수정</a></button>-->
+<!--        {% endif %}-->
+<!--    </div>-->
+    {% endif %}
+    {% endif %}
+    <button class="qna-home-btn">
+        <div onclick="history.back()">뒤로가기</div>
+    </button>
+    {% endblock %}
+    {% block script %}
+</div>
+<!--<script>-->
+<!--    const list = document.querySelector('.list');-->
+<!--    const pageContent = document.querySelector('.pageContent');-->
+<!--    const commentBtn = document.querySelector('#commentBtn');-->
+<!--    if (commentBtn) {-->
+<!--        commentBtn.addEventListener('click', function () {-->
+<!--            const commentFormTitle = document.querySelector('.commentFormTitle');-->
+<!--            if (commentFormTitle.textContent === '댓글쓰기') {-->
+<!--                addComment();-->
+<!--            } else {-->
+<!--                const cNo = document.querySelector('input[name="c_no"]').value;-->
+<!--                const cContent = document.querySelector('.b_content').value;-->
+<!--                modifyComment(cNo, cContent);-->
+<!--                commentFormTitle.innerHTML = '댓글쓰기';-->
+<!--            }-->
+
+<!--        });-->
+<!--    }-->
+
+<!--    function listRender(page) { // 게시물 리스트를 출력하는 function-->
+<!--        list.innerHTML = ' ';-->
+<!--        const currentPage = (page ? page : 1);-->
+<!--        return axios-->
+<!--            .get(`/comment/selectList/{{boards.b_no}}?page=${currentPage}`)-->
+<!--            .then((response) => {-->
+<!--                console.log('result : ', response.data);-->
+<!--                pageContent.innerHTML = '';-->
+<!--                for (let comment of response.data.comments.rows) {-->
+<!--                    const regDate = new Date(comment.c_reg_dt).toLocaleString(); // date 값을 보기 좋게 format하기 위함-->
+<!--                    let modDate = null;-->
+<!--                    if (comment.c_mod_dt) {-->
+<!--                        modDate = new Date(comment.c_mod_dt).toLocaleString();-->
+<!--                    }-->
+<!--                    const qna_con = document.createElement('div');-->
+<!--                    qna_con.className = 'qna-con';-->
+<!--                    if (comment.u_no_user.u_id === ('{{user.u_id}}')) {-->
+<!--                        qna_con.innerHTML =-->
+<!--                            `&lt;!&ndash;<div class="px70">${comment.c_no}</div>&ndash;&gt;-->
+<!--                                         <div class="comment-user">${comment.u_no_user.u_id}</div>-->
+<!--                                         <div class="commentContent">${comment.c_content}</div>-->
+<!--                                         <div class="comment-desc">-->
+<!--                                         <div>${regDate}</div>-->
+<!--                                         <div>${modDate}</div>-->
+<!--                                         <div><button class="comment-modify btn" onclick="modifyCommentForm(${comment.c_no})">수정</button></div>-->
+<!--                                         <div><button class="comment-delete btn" onclick="deleteComment(${comment.c_no})">삭제</button></div></div>`;-->
+<!--                    } else {-->
+<!--                        qna_con.innerHTML = `&lt;!&ndash;<div class="px70">${comment.c_no}</div>&ndash;&gt;-->
+<!--                                         <div class="comment-user">${comment.u_no_user.u_id}</div>-->
+<!--                                         <div>${comment.c_content}</div>-->
+<!--                                         <div class="comment-desc">-->
+<!--                                         <div>${regDate}</div>-->
+<!--                                         <div>${modDate}</div>-->
+<!--                                         <div>null</div>-->
+<!--                                         <div>null</div></div>`;-->
+<!--                    }-->
+<!--                    list.append(qna_con);-->
+<!--                }-->
+<!--                pageNavigation(response.data);-->
+<!--            })-->
+<!--            .catch((err) => {-->
+<!--                console.error(err);-->
+<!--            })-->
+<!--    }-->
+
+<!--    function pageNavigation(response) {-->
+<!--        const currentPage = Number(response.currentPage);-->
+<!--        const num = response.num;-->
+<!--        if (response.num[0] > 10) {-->
+<!--            const prev = document.createElement('li');-->
+<!--            prev.setAttribute('data-page', `${(response.checkNum-9)}`);-->
+<!--            prev.className = 'page';-->
+<!--            prev.innerHTML = 'prev';-->
+<!--            pageContent.append(prev);-->
+<!--        }-->
+<!--        for (let no of num) {-->
+<!--            const pageNav = document.createElement('li');-->
+<!--            pageNav.setAttribute('data-page', `${no}`);-->
+<!--            pageNav.setAttribute('onclick', `listRender(${no})`);-->
+<!--            pageNav.className = 'page';-->
+<!--            pageNav.innerHTML = `${Number(no)}`;-->
+<!--            pageContent.append(pageNav);-->
+<!--        }-->
+<!--        if ((currentPage + 10 < response.comments.count) && (num.length == 10)) {-->
+<!--            const next = document.createElement('li');-->
+<!--            next.setAttribute('data-page', `${(response.checkNum+11)}`);-->
+<!--            next.className = 'page';-->
+<!--            next.innerHTML = 'prev';-->
+<!--            pageContent.append(next);-->
+<!--        }-->
+<!--    }-->
+<!--    const addComment = async () => {-->
+<!--        const b_no = document.querySelector('input[name="b_no"]').value;-->
+<!--        const u_no = document.querySelector('input[name="u_no"]').value;-->
+<!--        const c_content = document.querySelector('textarea[name="c_content"]').value;-->
+<!--        console.log(`b_no : ${b_no} / u_no: ${u_no} / c_content : ${c_content}`);-->
+<!--        axios.post('/comment/add2', {-->
+<!--            b_no,-->
+<!--            u_no,-->
+<!--            c_content-->
+<!--        })-->
+<!--            .then((response) => {-->
+<!--                const commentContent = document.querySelector('.b_content');-->
+<!--                commentContent.value = '';-->
+<!--                listRender();-->
+<!--            })-->
+<!--            .catch((err) => {-->
+<!--                console.error(err);-->
+<!--            })-->
+<!--    }-->
+<!--    const modifyCommentForm = async (no) => {-->
+<!--        await axios.get(`/comment/selectOne/${no}`)-->
+<!--            .then((response) => {-->
+<!--                const commentFormTitle = document.querySelector('.commentFormTitle');-->
+<!--                const commentContent = document.querySelector('.b_content')-->
+<!--                const cNo = document.querySelector('input[name="c_no"]');-->
+<!--                commentFormTitle.innerHTML = '댓글수정';-->
+<!--                commentContent.value = `${response.data.comment.c_content}`;-->
+<!--                cNo.value = `${no}`;-->
+<!--            })-->
+<!--            .catch((err) => {-->
+<!--                console.error(err);-->
+<!--            })-->
+<!--    }-->
+<!--    const modifyComment = async (c_no, c_content) => {-->
+<!--        await axios.post(`/comment/modify`, {-->
+<!--            c_no,-->
+<!--            c_content-->
+<!--        })-->
+<!--            .then((response) => {-->
+<!--                listRender();-->
+<!--            })-->
+<!--            .catch((err) => {-->
+<!--                console.error(err);-->
+<!--            })-->
+<!--    }-->
+<!--    const deleteComment = async (no) => {-->
+<!--        await axios.post(`/admin/comment/delete`, {-->
+<!--            c_no: no-->
+<!--        })-->
+<!--            .then((response) => {-->
+<!--                console.log(response.data);-->
+<!--            })-->
+<!--            .catch((err) => {-->
+<!--                console.log(err);-->
+<!--            })-->
+<!--        listRender();-->
+<!--    }-->
+
+<!--    listRender();-->
+<!--</script>-->
+{% endblock %}

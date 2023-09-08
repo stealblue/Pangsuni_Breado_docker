@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<style>
+    body{
+        background-color: steelblue;
+    }
+    *{
+        color: whitesmoke;
+    }
+    .modify-container{
+        margin: 0 auto;
+        text-align: center;
+    }
+    h2{
+        text-align: center;
+        margin-top: 50px;
+    }
+    .write-btn {
+        background-color: orange;
+        padding: 8px 15px;
+        border-radius: 5px;
+        color: black;
+        font-size: 15px;
+        font-weight: 600;
+        border: none;
+    }
+    input,select,textarea{
+        color: steelblue;
+        padding: 10px;
+        font-size: 16px;
+        text-align: left;
+        margin-left:10px;
+        border: 1px solid steelblue;
+        border-radius: 15px;
+    }
+    p{
+        text-align: left;
+    }
+    .imgDiv{
+        text-align: left;
+    }
+    .preview{
+        width: 400px;
+        height: 400px;
+    }
+</style>
+<body>
+    <div class="modify-container">
+    <h2>상품관리 수정</h2>
+    <input type="hidden" name="page" value="{{page}}">
+    <form method="post" enctype="multipart/form-data">
+        <input type="hidden" name="p_no" value="{{product.p_no}}">
+        <p><label>제품명 </label><input name="p_name" value="{{product.p_name}}"></p>
+        <p><label>가&nbsp&nbsp&nbsp&nbsp격 </label><input name="p_price" type="number" value="{{product.p_price}}"></p>
+        <p><label>설&nbsp&nbsp&nbsp&nbsp명</label><textarea cols="50" rows="5" name="p_desc">{{product.p_desc}}</textarea></p>
+        <p><label>가&nbsp&nbsp&nbsp&nbsp게</label>
+            <select name="s_no">
+                {% for store in stores %}
+                {% if (store.s_no == product.s_no) %}
+                <option selected value="{{store.s_no}}">{{store.s_name}}</option>
+                {% else %}*
+                <option value="{{store.s_no}}">{{store.s_name}}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </p>
+        <p><label>이미지 </label><input type="file" name="p_img" class="previewBtn"></p>
+        <p><button type="submit" class="write-btn">수정</button></p>
+    </form>
+<div class="imgDiv">
+    <img src="../../../images/{{product.p_img}}" class="preview">
+</div>
+</div>
+</body>
+<script>
+    const form = document.querySelector('form');
+    const preview = document.querySelector('.preview');
+    const previewBtn = document.querySelector('.previewBtn');
+    previewBtn.addEventListener('change', ()=>{
+        const changeImg = URL.createObjectURL(previewBtn.files[0]);
+        preview.src=changeImg;
+    })
+    form.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        if(confirm('수정할까요?')){
+
+        }else{
+            return;
+        }
+        const formData = new FormData();
+        const p_no = document.querySelector('input[name="p_no"]').value;
+        const p_name = document.querySelector('input[name="p_name"]').value;
+        const p_price = document.querySelector('input[name="p_price"]').value;
+        const p_img = document.querySelector('input[name="p_img"]').files[0];
+        const s_no = document.querySelector('select[name="s_no"]').value;
+        const p_desc = document.querySelector('textarea[name="p_desc"]').value;
+        if(typeof p_img !== undefined){
+            formData.append('p_img',p_img);
+        }
+        formData.append('p_no',p_no);
+        formData.append('p_name',p_name);
+        formData.append('s_no',s_no);
+        formData.append('p_desc',p_desc);
+        formData.append('p_price',p_price);
+        try{
+            console.log('try');
+            const response = await axios.post('/admin/product/modify', formData, {
+                headers:{
+                    'Content-Type': 'multipart/form-data'
+                },
+            });
+            if(response.data.msg === 'uploadSuccess'){
+                const page = document.querySelector('input[name="page"]').value;
+                opener.parent.listRender(page);
+                window.close();
+            }
+        }catch (err) {
+            console.error(err);
+        }
+    })
+</script>
+</html>

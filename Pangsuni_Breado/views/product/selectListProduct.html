@@ -1,0 +1,65 @@
+{% extends 'layout.html' %}
+
+{% block style %}
+<style>
+    table{
+        border-collapse: collapse;
+        text-align: center;
+    }
+    tr{
+        background-color: whitesmoke;
+    }
+    th, td{
+        border: 2px solid steelblue;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<h1>제품</h1>
+<table>
+    <tr class="item">
+        <th>제품번호</th>
+        <th>가게이름</th>
+        <th>제품이름</th>
+        <th>가격</th>
+        <th>수정</th>
+        <th>삭제</th>
+    </tr>
+    {% for p in products.rows %}
+    <tr class="item">
+        <td>{{ p.p_no }}</td>
+        <td>{{ p.s_no_store.s_name }}</td>
+        <td>{{ p.p_name }}</td>
+        <td>{{ p.p_price }}원</td>
+        <td>
+            <button><a href="/product/modify/{{ p.p_no }}">수정</a></button>
+        </td>
+        <td>
+            <button><a href="/product/delete/{{p.p_no}}">삭제</a></button>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+<div>
+    <ul>
+        {% set nowPage = (currentPage/10) + 1 %}
+        {% if num[0] > 10 %}
+        <li><a href="?page={{(checkNum-9)}}">prev</a></li>
+        {% endif %}
+        {% for n in num %}
+        <li><a href="?page={{n}}">{{n}}</a></li>
+        {% endfor %}
+        {% if currentPage+10 < products.count %}
+        {% if num.length == 10 %}
+        <li><a href="?page={{checkNum+11}}">next</a></li>
+        {% endif %}
+        {% endif %}
+    </ul>
+</div>
+<div><button><a href="/product/add">추가</a></button></div>
+<div>
+    <p> currentPage : {{currentPage+10}}</p>
+    <p> products.count : {{products.count}}</p>
+</div>
+{% endblock %}

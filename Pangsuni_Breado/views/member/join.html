@@ -1,0 +1,241 @@
+{% extends 'layout.html' %} {% block body %}
+
+<div id="join">
+  <h2>회원가입</h2>
+  <form action="/join" method="post">
+    <div class="join-input">
+      <label>이름</label>
+      <input type="text" name="u_name" class="name" />
+      <span class="name-text"></span>
+
+      <label>아이디</label>
+      <input type="text" name="u_id" class="id" />
+      <span class="id-text">영문/영문과 숫자를 조합하여 최소 6자리 이상 10자리로 입력바랍니다.</span>
+      <!-- <input type="button" class="id_Check" value="중복체크" disabled="disabled"></input> -->
+      <input type="hidden" class="check_id" value="0" />
+      <input type="checkbox" name="id_Check_ok" class="id_Check_ok" unchecked disabled />
+
+      <label>비밀번호</label>
+      <input type="password" name="u_pwd" class="password" />
+      <span class="pwd-text">영문과 숫자를 조합하여 6자리 이상으로 입력해주세요.</span>
+
+      <label>비밀번호확인</label>
+      <input type="password" class="re-password" />
+      <span class="repwd-text"></span>
+
+      <label>전화번호</label>
+      <input type="text" name="u_tel" class="tel" />
+      <span class="tel-text">ex &#41; 010-2222-2222</span>
+
+      <label>이메일</label>
+      <input type="email" name="u_email" class="email" />
+      <span class="email-text"></span>
+    </div>
+    <button class="btn join-btn" type="submit" disabled>회원가입</button>
+  </form>
+</div>
+<script type="text/javascript">
+  function checkJoin() {
+    let chEmail = RegExp(/^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/);
+    let checkID = RegExp(/^[a-z0-9]{5,10}$/);
+    let checkPW = RegExp(/^[A-Za-z0-9]{6,12}$/);
+    let chName = RegExp(/^[가-힣]{2,5}$/);
+    let chTel = RegExp(/^01([0|1|6|7|8|9])-([0-9]{3,4})-([0-9]{4})$/);
+    // 이름 유효성 검사
+    $(".name").blur(function () {
+      if ($(".name").val() == "") {
+        $(".name-text").text("이름은 필수입력 값 입니다.");
+        $(".name-text").css("color", "red");
+        $(".name").focus();
+      } else if (!chName.test($(".name").val())) {
+        $(".name-text").text("이름이 올바르지 않습니다");
+        $(".name-text").css("color", "red");
+      } else if (chName.test($(".name").val())) {
+        $(".name-text").text("이름 입력 완료");
+        $(".name-text").css("color", "green");
+        return true;
+      }
+    });
+
+    // 아이디 유효성 검사
+    $(".id").blur(function () {
+      if ($(".id").val() == "") {
+        $(".id-text").text("아이디는 필수입력 값 입니다.");
+        $(".id-text").css("color", "red");
+        $(".join-btn").attr("disabled", true);
+        $(".join-btn").css("background-color", "lightgray");
+      } else if (!checkID.test($(".id").val())) {
+        $(".id-text").text("아이디가 올바르지 않습니다");
+        $(".id-text").css("color", "red");
+        $(".join-btn").attr("disabled", true);
+        $(".join-btn").css("background-color", "lightgray");
+      } else if (checkID.test($(".id").val())) {
+        $(".id-text").text("아이디 입력 완료");
+        $(".id-text").css("color", "green");
+        $(".id_Check").attr("disabled", false);
+        const id = $(".id").val();
+        axios({
+          url: "/idCheck", // 통신할 웹문서
+          method: "post", // 통신할 방식
+          data: {
+            // 인자로 보낼 데이터
+
+            id: id,
+          },
+          responseType: "json",
+          responseEncoding: "utf-8",
+        })
+          .then((res) => {
+            console.log("axios1->", res);
+            console.log("axios2->", res.data.msg);
+            console.log("axios3->", res.status);
+            if (res.data.msg === "사용가능") {
+              $(".id-text").text("사용가능한 아이디 입니다.");
+              $(".id_Check_ok").attr("checked", true);
+              $(".id-text").css("color", "green");
+              $(".join-btn").attr("disabled", false);
+              $(".join-btn").css("background-color", "orange");
+            }
+          })
+          .catch((error) => {
+            console.log("axios1ec->", error);
+            console.log("axios1ec->", error.code);
+            if (error.code === "ERR_BAD_RESPONSE") {
+              $(".id-text").text(`이미 존재하는 아이디 입니다.`);
+              $(".id_Check_ok").attr("checked", false);
+              $(".id-text").css("color", "red");
+              $(".join-btn").attr("disabled", true);
+              $(".join-btn").css("background-color", "lightgray");
+            }
+          });
+        return true;
+      }
+    });
+
+    // 비밀번호 유효성 검사
+    $(".password").blur(function () {
+      if ($(".password").val() == "") {
+        $(".pwd-text").text("비밀번호를 입력해주세요.");
+        $(".pwd-text").css("color", "red");
+      } else if (!checkPW.test($(".password").val())) {
+        $(".pwd-text").text("영문과 숫자를 조합하여 6자리 이상으로 입력해주세요.");
+        $(".pwd-text").css("color", "red");
+      } else if (checkPW.test($(".password").val())) {
+        $(".pwd-text").text("비밀번호 입력 완료");
+        $(".pwd-text").css("color", "green");
+        return true;
+      }
+    });
+
+    // 비밀번호 일치
+    $(".re-password").blur(function () {
+      if ($(".re-password").val() == "") {
+        $(".pwd-text").text("비밀번호를 입력해주세요.");
+        $(".pwd-text").css("color", "red");
+      } else if ($(".password").val() != $(".re-password").val()) {
+        $(".repwd-text").text("비밀번호가 일치하지 않습니다");
+        $(".repwd-text").css("color", "red");
+
+        $(".re-password").val("");
+        $(".re-password").focus();
+        return false;
+      } else if ($(".password").val() == $(".re-password").val()) {
+        $(".repwd-text").text("비밀번호 일치");
+        $(".repwd-text").css("color", "green");
+      }
+    });
+    // 전화번호 유효성 검사
+    $(".tel").blur(function () {
+      if ($(".tel").val() == "") {
+        $(".tel-text").text("전화번호를 입력해주세요.");
+        $(".tel-text").css("color", "red");
+      } else if (!chTel.test($(".tel").val())) {
+        $(".tel-text").text("전화번호를 확인해주세요. ex)010-2222-2222");
+        $(".tel-text").css("color", "red");
+      } else if (chTel.test($(".tel").val())) {
+        const tel = $(".tel").val();
+        axios({
+          url: "/telCheck", // 통신할 웹문서
+          method: "post", // 통신할 방식
+          data: {
+            // 인자로 보낼 데이터
+
+            tel: tel,
+          },
+          responseType: "json",
+          responseEncoding: "utf-8",
+        })
+          .then((res) => {
+            console.log("axios1->", res);
+            console.log("axios2->", res.data.msg);
+            console.log("axios3->", res.status);
+            if (res.data.msg === "사용가능") {
+              $(".tel-text").text("사용가능한 전화번호 입니다.");
+              // $(".id_Check_ok").attr('checked',true,)
+              // $(".id-text").css("color", "green");
+            }
+          })
+          .catch((error) => {
+            console.log("axios1ec->", error);
+            console.log("axios1ec->", error.code);
+            if (error.code === "ERR_BAD_RESPONSE") {
+              $(".tel-text").text(`이미 존재하는 전화번호 입니다.`);
+              $(".tel-text").css("color", "red");
+            }
+          });
+        $(".tel-text").css("color", "green");
+        return true;
+      }
+    });
+
+    // 이메일 유효성 ㄱ머사
+    $(".email").blur(function () {
+      if ($(".email").val() == "") {
+        $(".email-text").text("이메일을 입력해주세요.");
+        $(".email-text").css("color", "red");
+      } else if (!chEmail.test($(".email").val())) {
+        $(".email-text").text("이메일 형식에 맞게 입력하세요. ex) ****@naver.com");
+        $(".email-text").css("color", "red");
+      } else if (chEmail.test($(".email").val())) {
+        const email = $(".email").val();
+        axios({
+          url: "/emailCheck", // 통신할 웹문서
+          method: "post", // 통신할 방식
+          data: {
+            // 인자로 보낼 데이터
+
+            email: email,
+          },
+          responseType: "json",
+          responseEncoding: "utf-8",
+        })
+          .then((res) => {
+            console.log("axios1->", res);
+            console.log("axios2->", res.data.msg);
+            console.log("axios3->", res.status);
+            if (res.data.msg === "사용가능") {
+              $(".email-text").text("사용가능한 이메일 입니다.");
+              // $(".id_Check_ok").attr('checked',true,)
+              $(".email-text").css("color", "green");
+            }
+          })
+          .catch((error) => {
+            console.log("axios1ec->", error);
+            console.log("axios1ec->", error.code);
+            if (error.code === "ERR_BAD_RESPONSE") {
+              $(".email-text").text(`이미 존재하는 이메일 입니다.`);
+              $(".email-text").css("color", "red");
+            }
+          });
+        return true;
+      }
+    });
+  }
+  checkJoin();
+
+  if ($("input:checkbox[name=id_Check_ok]").is(":checked")) {
+  } else {
+    $(".join-btn").attr("disabled", true);
+  }
+</script>
+{% endblock %} {% block script %} {% endblock %}

@@ -1,0 +1,143 @@
+{% extends 'admin/admin.html' %}
+{% block style %}
+<style>
+  .category3 {
+    background-color: #222;
+  }
+  .category3 a {
+    color: #fff;
+  }
+
+  #amdin-order{
+    width: 80%;
+  }
+
+  #amdin-order .order-title{
+    display: flex;
+    border-bottom: 2px solid #333;
+    margin-top: 30px;
+  }
+
+  #amdin-order .order-title li{
+    text-align: center;
+    padding: 15px 0;
+    font-weight: 500;
+  }
+
+  #amdin-order .orderList ul{
+    display: flex;
+    border-bottom: 1px solid #888;
+  }
+
+  #amdin-order .orderList ul li{
+    text-align: center; 
+    padding: 10px 0;
+    line-height: 35px;
+  }
+</style>
+{% endblock %}
+{% block body %}
+<div id="amdin-order">
+<h2>주문내역</h2>
+
+    <ul class="order-title">
+        <li class="px100">주문번호</li>
+        <li class="px100">유저아이디</li>
+        <li class="px150">가게</li>
+        <li class="px150">제품명</li>
+        <li class="px100">주문시간</li>
+        <li class="px100">픽업시간</li>
+        <li class="px100">갯수</li>
+    </ul>
+
+    <div class="orderList">
+    </div>
+    <tfoot class='orderPage'></tfoot>
+<ul class="pageContent"></ul>
+    <div>
+        <select class="searchType">
+            <option value="o_no">주문 번호</option>
+            <option value="u_id">유저 아이디</option>
+            <option value="s_name">가게 이름</option>
+            <option value="p_name">제품 이름</option>
+        </select>
+        <input class="keyword" placeholder="일치하는 결과만 보여줍니다.">
+        <button class="searhBtn">검색</button>
+    </div>
+</div>
+{% endblock %}
+{% block script%}
+<script>
+    const list = document.querySelector('.orderList');
+    const pageContent = document.querySelector('.pageContent');
+    const searchBtn = document.querySelector('.searhBtn');
+    function listRender(page, keyword, type) { // 게시물 리스트를 출력하는 function
+        list.innerHTML = '';
+        const currentPage = (page ? page : 1);
+        const searchKeyword = (keyword ? keyword : '');
+        const searchType = (type ? type : '');
+        return axios
+            .get(`/admin/order/selectList?page=${currentPage}&searchType=${searchType}&keyword=${searchKeyword}`)
+            .then((response) => {
+                console.log('result : ', response.data);
+                pageContent.innerHTML='';
+                for (let order of response.data.orders.rows) {
+                    console.log('게시글 번호 : ', order.o_no);
+                    const regDate = new Date(order.o_reg_dt).toLocaleDateString(); // date 값을 보기 좋게 format하기 위함
+                    const pickupDate = new Date(order.o_pickup_dt).toLocaleDateString();
+                    const qna_con = document.createElement('ul');
+                    qna_con.className = 'qna-con';
+                    qna_con.innerHTML = `<li class="px100">${order.o_no}</li>
+                                         <li class="px100">${order.u_no_user.u_id}</li>
+                                         <li class="px150">${order.p_no_product.s_no_store.s_name}</li>
+                                         <li class="px150">${order.p_no_product.p_name}</li>
+                                         <li class="px100">${regDate}</li>
+                                         <li class="px100">${pickupDate}</li>
+                                         <li class="px100">${order.o_cnt}</li>`;
+                    list.append(qna_con);
+                }
+                pageNavigation(response.data);
+            })
+            .catch((err) => {
+                console.error(err);
+            })
+    }
+
+    listRender();
+    function pageNavigation(response){
+        const currentPage = Number(response.currentPage);
+        const num = response.num;
+        console.log('페이지네이션 확인 :', num);
+        if(response.num[0]> 10){
+            const prev = document.createElement('li');
+            prev.setAttribute('data-page',`${(response.checkNum-9)}`);
+            prev.setAttribute('onclick', `listRender(${(response.checkNum-9)})`);
+            prev.className = 'page';
+            prev.innerHTML = `<i class="fa-solid fa-arrow-left" style="color: #be6b1e;"></i>`;
+            pageContent.append(prev);
+        }
+        for(let no of num){
+            const pageNav = document.createElement('li');
+            pageNav.setAttribute('data-page', `${no}`);
+            pageNav.setAttribute('onclick', `listRender(${no})`);
+            pageNav.className = 'page';
+            pageNav.innerHTML=`${Number(no)}`;
+            pageContent.append(pageNav);
+        }
+        if((currentPage+10 < response.orders.count)&& (num.length == 10)){
+            const next =document.createElement('li');
+            next.setAttribute('data-page',`${(response.checkNum+11)}`);
+            next.setAttribute('onclick', `listRender(${(response.checkNum+11)})`);
+            next.className = 'page';
+            next.innerHTML = `<i class="fa-solid fa-arrow-right" style="color: #be6b1e;"></i>`;
+            pageContent.append(next);
+        }
+    }
+
+    searchBtn.addEventListener('click', ()=>{
+        const searchType = document.querySelector('.searchType').value;
+        const searchKeyword = document.querySelector('.keyword').value;
+        listRender(null, searchKeyword, searchType);
+    })
+</script>
+{% endblock %}

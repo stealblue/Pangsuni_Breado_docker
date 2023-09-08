@@ -1,0 +1,180 @@
+{% extends 'admin/admin.html' %} {% block style %}
+<style>
+  .category2 {
+    background-color: #222;
+  }
+
+  .category2 a {
+    color: #fff;
+  }
+
+  #admin-member .member-title{
+    display: flex;
+    border-bottom: 2px solid #333;
+    margin-top: 30px;
+  }
+
+  #admin-member .member-title li{
+    text-align: center;
+    padding: 15px 0;
+    font-weight: 500;
+  }
+
+  #admin-member .member-list ul {
+    display: flex;
+    border-bottom: 1px solid #888;
+  }
+
+  #admin-member .member-list ul li{
+    text-align: center; 
+    padding: 10px 0;
+    line-height: 35px;
+  }
+
+  #admin-member .member-container{
+    width: 80%;
+  }
+
+  #admin-member .btn{
+    padding: 5px 10px;
+    background-color : transparent;
+    transition: .3s;
+    cursor: pointer;
+  }
+
+  #admin-member .btn:hover{
+    background-color: #333;
+    color: #fff;
+  }
+  
+
+</style>
+{% endblock %} {% block body %}
+
+<div id="admin-member">
+
+
+
+<h2>회원관리</h2>
+
+<!-- {% for u in list %}
+<div id="admin-member">
+  <div>
+      <ul data-user-id="{{u.u_no}}" class="user-list">
+        <li>{{u.u_no}}</li>
+        <li>{{u.u_id}}</li>
+        <li>{{u.u_name}}</li>
+        <li>{{u.u_reg_dt}}</li>
+        <li><button class="btn member-des"  data-id="{{u.u_no}}">회원정보</button></li>
+        <li><button class="btn member-modify">수정</button><button class="btn member-delete">삭제</button></li>
+      </ul>
+    </a>
+  </div>
+</div>
+
+{% endfor %}  -->
+
+<div class="member-container">
+    <ul class="member-title">
+        <li class="px100">회원번호</li>
+        <li class="px100">아이디</li>
+        <li class="px100">이름</li>
+        <li class="px125">가입일</li>
+        <li class="px125">상세보기</li>
+        <li class="px100">수정</li>
+        <li class="px100">삭제</i></li>
+    </ul>
+
+      <div class="member-list">
+        <!-- 회원리스트 -->
+      </div>
+    </div>
+
+<ul class="pageContent"></ul>
+</div>
+{% endblock %} {% block script %}
+<script>
+
+  const list = document.querySelector('.member-list'); // 리스트를 담기 위해 불러옴
+  const pageContent = document.querySelector('.pageContent'); // 페이지네비게이션 부분
+  function listRender(page) { // 리스트를 출력하기 위한 function
+    list.innerHTML = '';
+    const currentPage = (page ? page : 1);
+    return axios
+      .get(`/admin/member/select/?page=${currentPage}`) // 실행부분
+      .then((response) => { // 성공했을시 수행됨
+        console.log('result : ', response.data);
+        pageContent.innerHTML = '';
+        for (let users of response.data.users.rows) {
+          console.log('회원번호 : ', users.u_no);
+          const member_con = document.createElement('ul');
+          member_con.className = 'member-con';
+            const regDate = new Date(users.u_reg_dt).toLocaleDateString(); // date 값을 보기 좋게 format하기 위함
+          member_con.innerHTML = `<li class="px100">${users.u_no}</li>
+                                         <li class="px100">${users.u_id}</li>
+                                         <li class="px100">${users.u_name}</li>
+                                         <li class="px125">${regDate}</li>
+                                         <li class="px125"><button class="btn" onclick="window.open('/admin/member/detail/${users.u_no}','detail','width=900 height=800 resizable=no toolbars=no menubar=no')">상세보기</button></li>
+                                         <li class="px100"><button onclick="window.open('/admin/member/modify/${users.u_no}?page=${currentPage}', 'modify', 'width=700 height=700 resizable=no toolbars=no menubar=no')"><i class="fa-solid fa-user-plus fa-bounce"></i></button></li>
+                                         <li class="px100"><a onclick="deleteMember(${users.u_no})"><i class="fa-sharp fa-solid fa-user-minus fa-fade"></i></a></li>`;
+          list.append(member_con);
+        }
+        pageNavigation(response.data);
+      })
+      .catch((err) => { // 실패했을시 수행됨
+        pageContent.innerHTML = '검색결과가 없어요';
+        console.error(err);
+      })
+  }
+
+  function pageNavigation(response) {
+    const currentPage = Number(response.currentPage);
+    const num = response.num;
+    console.log('페이지네이션 확인 :', num);
+    if (response.num[0] > 10) {
+      const prev = document.createElement('li');
+      prev.setAttribute('data-page', `${(response.checkNum-9)}`);
+      prev.className = 'page';
+      prev.innerHTML = 'prev';
+      pageContent.append(prev);
+    }
+    for (let no of num) {
+      const pageNav = document.createElement('li');
+      pageNav.setAttribute('data-page', `${no}`);
+      pageNav.setAttribute('onclick', `listRender(${no})`);
+      pageNav.className = 'page';
+      pageNav.innerHTML = `${Number(no)}`;
+      pageContent.append(pageNav);
+    }
+    if ((currentPage + 10 < response.users.count) && (num.length == 10)) {
+      const next = document.createElement('li');
+      next.setAttribute('data-page', `${(response.checkNum+11)}`);
+      next.className = 'page';
+      next.innerHTML = 'prev';
+      pageContent.append(next);
+    }
+  }
+
+  const deleteMember = async (u_no)=> {
+    confirm("정말로 삭제하시겠습니까?")
+    if(confirm){
+      await axios.post('/admin/member/delete', {
+        u_no
+      })
+      .then((response) => {
+        console.log('성공');
+        console.log(response.data);
+        listRender();
+      })
+      .catch((err) => {
+        console.log('실패');
+        console.log(err);
+        listRender();
+      })
+    }else{
+      return false;
+    }
+  }
+  listRender();
+</script>
+{% endblock %}

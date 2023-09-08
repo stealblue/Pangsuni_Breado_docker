@@ -1,0 +1,107 @@
+#mypage {
+  width: 100%;
+  text-align: center;
+  margin: 0 auto;
+}
+
+#mypage .user-profile {
+  font-size: 26px;
+  font-weight: 600;
+  margin-top: 50px;
+}
+
+#mypage .profile-container {
+  width: 600px;
+  border: 1px solid #333;
+  border-radius: 10px;
+  margin: 0 auto;
+  margin-top: 40px;
+  padding: 0 20px 30px 20px;
+}
+
+#mypage .mypage-list li {
+  padding: 8px 20px;
+  font-size: 20px;
+  text-align: center;
+  font-weight: 500;
+}
+#mypage .mypage-list li p {
+  font-weight: 300;
+}
+
+#mypage .btn {
+  padding: 10px 20px;
+  margin: 40px 10px 0 10px;
+  border: none;
+  background-color: #ffd56f;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  transition: 0.4s;
+  cursor: pointer;
+}
+
+#mypage .btn:hover {
+  background-color: #ff7b54;
+}
+#mypage .btn:hover a {
+  color: #fff;
+}
+
+/* modify */
+#modify-mypage {
+  text-align: center;
+  margin: 0 auto;
+}
+
+#modify-mypage h4 {
+  display: inline-block;
+  margin-top: 80px;
+  font-size: 26px;
+  padding-bottom: 20px;
+  border-bottom: 3px solid #888;
+}
+
+.mypage-list {
+  margin-top: 30px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.mypage-list li {
+  font-size: 18px;
+  padding: 10px 0;
+}
+
+.mypage-list li p {
+  margin-top: 5px;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.mypage-list input {
+  text-align: center;
+  padding: 5px 20px;
+  margin-top: 10px;
+  border-radius: 10px;
+  font-size: 18px;
+}
+
+#modify-mypage .btn {
+  padding: 10px 20px;
+  margin: 20px 10px;
+  border: none;
+  background-color: #ffd56f;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  transition: 0.4s;
+  cursor: pointer;
+}
+
+#modify-mypage .btn:hover {
+  background-color: #ff7b54;
+}
+#modify-mypage .btn:hover a {
+  color: #fff;
+}

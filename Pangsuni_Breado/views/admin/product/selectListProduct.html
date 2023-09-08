@@ -1,0 +1,155 @@
+{% extends 'admin/admin.html' %}
+{% block style %}
+<style>
+    .category1 {background-color: #222;}
+    .category1 a {color: #fff;}
+    #admin-board .product-title{
+        display: flex;
+        border-bottom: 2px solid #333;
+        margin-top: 30px;
+        padding: 10px 0;
+    }
+    .qna-con{
+        display: flex;
+    }
+
+    .qna-con li{
+        padding: 10px 0;
+    }
+
+    #admin-board .board-title li{
+        text-align: center;
+        padding: 15px 0;
+    }
+    #admin-board .boardList ul {
+        display: flex;
+        border-bottom: 1px solid #888;
+    }
+    #admin-board .boardList ul li{
+        text-align: center;
+        padding: 10px 0;
+        line-height: 35px;
+    }
+    #admin-board .board-container{width: 80%;}
+    .px50{width: 50px;}
+    .px80{width: 80px;}
+    .px100{width: 100px;}
+    .px120{width: 120px;}
+    .px150{width: 150px;}
+    .px200{width: 200px;}
+    #admin-board .btn{padding: 5px 10px;}
+
+    .write-btn {
+        background-color: orange;
+    }
+        border-radius: 5px;
+        color: black;
+        font-size: 15px;
+        font-weight: 600;
+        border: none;
+    }
+
+    .qna-con{
+        margin-top: 10px;
+    }
+
+</style>
+{% endblock %}
+{% block body %}
+<div id="admin-board">
+ <h2>상품 관리</h2>
+
+
+<ul class="product-title">
+    <li class="px120">빵번호</li>
+    <li class="px120">지역</li>
+    <li class="px120">가게이름</li>
+    <li class="px150">빵이름</li>
+    <li class="px120">수정</li>
+    <li class="px120">삭제</li>
+</ul>
+<div class="list"></div>
+<ul class="pageContent"></ul>
+<div>
+    <button class="write-btn"><a href="/admin/product/add">추가</a></button>
+</div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    const list = document.querySelector('.list');
+    const pageContent = document.querySelector('.pageContent');
+    const searchBtn = document.querySelector('.searchBtn');
+    function listRender(page) { // 리스트를 출력하기 위한 function
+        list.innerHTML = '';
+        const currentPage = (page ? page : 1);
+        return axios
+
+            .get(`/admin/product/selectList/?page=${currentPage}`) // 실행부분
+            .then((response) => {
+                console.log('result : ', response.data);
+                pageContent.innerHTML='';
+                for (let product of response.data.products.rows) {
+                    const qna_con = document.createElement('ul');
+                    qna_con.className = 'qna-con';
+                    qna_con.innerHTML = `<li class="px120">${product.p_no}</li>
+                                         <li class="px120">${product.s_no_store.r_no_region.r_name}</li>
+                                         <li class="px120">${product.s_no_store.s_name}</li>
+                                         <li class="px150">${product.p_name}</li>
+                                         <li class="px120"><button class="btn" onclick="window.open('/admin/product/modify/${product.p_no}?page=${currentPage}','상품 수정','width=500 height=800 resizable=no toolbar=no menubar=no')">수정</button></li>
+                                         <li class="px120"><button class="btn" onclick="deleteProduct(${product.p_no},${currentPage})"><i class="fa-solid fa-trash"></i></button></li>`;
+                    list.append(qna_con);
+                }
+                pageNavigation(response.data);
+            })
+            .catch((err) => {
+                pageContent.innerHTML='검색결과가 없어요';
+                console.error(err);
+            })
+    }
+    function pageNavigation(response){
+        const currentPage = Number(response.currentPage);
+        const num = response.num;
+        console.log('페이지네이션 확인 :', num);
+        if(response.num[0]> 10){
+            const prev = document.createElement('li');
+            prev.setAttribute('data-page',`${(response.checkNum-9)}`);
+            prev.setAttribute('onclick', `listRender(${(response.checkNum-9)})`);
+            prev.className = 'page';
+            prev.innerHTML = `<i class="fa-solid fa-left-long"></i>`;
+            pageContent.append(prev);
+        }
+        for(let no of num){
+            const pageNav = document.createElement('li');
+            pageNav.setAttribute('data-page', `${no}`);
+            pageNav.setAttribute('onclick', `listRender(${no})`);
+            pageNav.className = 'page';
+            pageNav.innerHTML=`${Number(no)}`;
+            pageContent.append(pageNav);
+        }
+        if((currentPage+10 < response.products.count)&& (num.length == 10)){
+            const next =document.createElement('li');
+            next.setAttribute('data-page',`${(response.checkNum+11)}`);
+            next.setAttribute('onclick', `listRender(${(response.checkNum+11)})`);
+            next.className = 'page';
+            next.innerHTML = `<i class="fa-solid fa-right-long"></i>`;
+            pageContent.append(next);
+        }
+    }
+    const deleteProduct = async (p_no,page)=>{
+        await axios.post('/admin/product/delete',{p_no})
+            .then((response)=>{
+                console.log('성공');
+                console.log(response.data);
+                listRender(page);
+            })
+            .catch((err)=>{
+                console.log('실패');
+                console.log(err);
+                listRender(page);
+            })
+    }
+
+    listRender();
+</script>
+{% endblock %}

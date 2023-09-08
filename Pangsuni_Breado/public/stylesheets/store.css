@@ -1,0 +1,164 @@
+#store{
+    text-align: center;
+}
+#store h4{
+    margin-top: 50px;
+    font-size: 26px;
+}
+
+#store h5{
+    font-size: 24px;
+    text-align: center;
+    display: block;
+}
+
+#store .region-list{
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+#store .region-list li{
+    padding: 5px 30px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 500;
+    border: 1px solid var(--sub-bg-color);
+    margin-top: 5px;
+    margin-left: 10px;
+    border-radius: 20px;
+}
+
+#store .region-list li:last-child{
+    border-right: 1px solid var(--sub-bg-color);
+}
+
+#store .region-list li:hover{
+    background-color: var(--sub-bg-color);
+    color: #fff;
+}
+
+#store #regionStore{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 40px;
+}
+
+#store #regionStore .store{
+    /* border: 1px solid #333; */
+    width: 25%;
+    height: 450px;
+    margin: 20px ;
+    padding: 10px 30px;
+    border-radius: 10%;
+    transition: .4s;
+    box-shadow: 3px 3px 10px 1px rgba(65, 65, 72, 0.2);
+}
+
+#store #regionStore .store:hover{
+    opacity: .7;
+}
+#store .s_addr{
+    margin-top: 20px;
+}
+
+#store .store-img{
+    display: block;
+    width: 100%;
+    height: 300px;
+    background-color: #333;
+    background-image: url('../images/store_bread.jpg');
+    background-position: 50%;
+    margin: 15px 0;
+    border-radius: 10%;
+}
+
+#store .store-name{
+    font-size: 24px;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+
+/* media */
+
+@media (max-width : 1600px){
+    #store #regionStore{
+        width: 100%;
+    }
+    #store #regionStore .store{
+        width: 25%;
+    }
+}
+
+
+@media (max-width : 1260px){
+    #store #regionStore .store{
+        width: 30%;
+        margin: 10px ;
+    }
+}
+
+@media (max-width : 960px){
+    #store #regionStore .store{
+        width: 30%;
+        margin: 10px ;
+    }
+}
+
+/* store - detail */
+
+#store-detail{
+    text-align: center;
+    position: relative;
+    margin-top: 150px;
+}
+
+#store-detail .back-page{
+    text-align: left;
+    margin-left: 100px;
+    position: absolute;
+    top: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    position: .3s;
+}
+
+#store-detail .back-page i{
+    font-size: 30px;
+    margin-right: 5px;
+}
+
+#store-detail .back-page:hover{
+    opacity: .8
+}
+
+#store-detail .store-name{
+    font-size: 36px;
+    font-weight: 600;
+    margin-top: 30px;
+}
+
+#store-detail .store-pic{
+    background-image: url("../images/store_bread.jpg");
+    background-size: 100%;
+    /*background-position: 50% 50% ;*/
+    /*background-repeat: no-repeat;*/
+    height: 500px;
+    width: 80%;
+    margin: 0 auto;
+    margin-top: -30px;
+}
+
+.s_addr{
+    font-size: 20px;
+    margin-top: 40px;
+}
+
+#map{
+    margin: 0 auto;
+}

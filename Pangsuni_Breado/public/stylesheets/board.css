@@ -1,0 +1,243 @@
+/*-----1.게시판 board-메인-qna 부분 스타일속성-----*/
+
+.test {
+  display: block;
+}
+
+.b_title {
+  width: 500px;
+}
+
+.board-paging-num {
+  width: 50px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.qnabox {
+  width: 100%;
+  height: 100px;
+  display: none;
+}
+
+.qna-list-con:hover {
+  background: lightgray;
+}
+
+#qna-border {
+  text-align: center;
+}
+
+#qna-border h1 {
+  margin-top: 30px;
+}
+#qna-border p {
+  margin: 20px 0;
+  font-size: 17px;
+}
+
+.qna-list-con {
+  padding: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  justify-content: space-around;
+  border-bottom: 1px solid #555;
+}
+
+.qna-title {
+  padding: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  justify-content: space-around;
+  border-bottom: 1px solid #555;
+  padding: 10px;
+  cursor: pointer;
+  background: #95e0c8;
+}
+
+.qna-list-con li {
+  width: 1000px;
+  text-align: center;
+}
+
+.qna-home-btn {
+  background-color: #fff;
+  border: 1px solid #333;
+  padding: 8px 15px;
+  border-radius: 5px;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 30px;
+  cursor: pointer;
+}
+
+.qna-paging-align {
+  text-align: center;
+}
+
+/*----- 2.boardDetail.html의 스타일속성 ---- */
+
+.qna-boardDetail-con {
+  /* background-color: #fdf4e3; */
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid rgba(102, 101, 101, 0.519);
+}
+
+.qna-boardDetail-con.desc-con{
+  height: 150px;
+}
+
+.title{
+  margin-top: 30px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.qna-comment-border {
+  border: 2px solid white;
+  padding: 5px;
+}
+
+.qna-comment-list {
+  border: 2px solid white;
+  padding: 5px;
+  display: block;
+}
+/*----- 3.boardview.html의 스타일속성 ---- */
+
+#qna-comments-bg {
+  /*width: 1000px;*/
+  text-align: center;
+  /*opacity: 0.5;*/
+}
+
+.qna-comment-btn {
+  background-color: #cf8afd;
+  padding: 8px 15px;
+  border-radius: 5px;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+}
+
+#qna-comments .btn {
+  /*background-color: #fab53e;*/
+  padding: 8px 15px;
+  border-radius: 5px;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.comments-btn {
+  background-color: var(--main-bg-color);
+  padding: 8px 15px;
+  border-radius: 5px;
+  color: black;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  margin-top: 30px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+#qna-comments .b_content {
+  width: 500px;
+  height: 150px;
+}
+
+#qna-write {
+  /*width: 1000px;*/
+  text-align: center;
+  /*background-color: #fdf4e3;*/
+  /*opacity: 0.5;*/
+}
+
+.qna-write-btn {
+  background-color: #95e0c8;
+  padding: 8px 15px;
+  border-radius: 5px;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.qna-write-search-box {
+  background-color: #fab53e;
+  padding: 8px 20px;
+  border-radius: 5px;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  float: right;
+}
+
+.qna-write-search-btn {
+  /*background-color: #a1a2a2;*/
+  /*padding: 3px 10px;*/
+  /*border-radius: 5px;*/
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+}
+
+#qna-write .b_content {
+  width: 500px;
+  height: 150px;
+}
+
+.write-btn {
+  background-color: var(--main-bg-color);
+  padding: 8px 15px;
+  border-radius: 5px;
+  color: black;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  transition: .4s;
+  cursor: pointer;
+}
+
+.write-btn:hover{
+  background-color: var(--sub-bg-color);
+}
+
+
+/* qna 글쓰기 */
+
+#qna-write{
+  width: 80%;
+  margin: 0 auto;
+}
+
+#qna-write input{
+  padding:  10px 10px;
+  width: 30%;
+  font-size: 16px;
+  margin-left:10px;
+}
+
+#qna-write label{
+  font-weight: 500;
+}
+
+.write-box{
+  margin-top: 20px;
+}
+
+#qna-write .b_content{
+  margin-top: 20px;
+  width: 80%;
+  height: 300px;
+  padding:20px;
+  text-align: center;
+  font-size: 16px;
+}

@@ -1,0 +1,81 @@
+* {
+  padding: 0;
+  margin: 0;
+  text-decoration: none;
+  list-style: none;
+  color: #333;
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+table,tr,td,th{
+  border:1px solid #888;
+border-collapse:collapse;
+text-align:center; 
+padding: 10px 20px;
+}
+
+h2 {
+  margin-top: 50px;
+  font-size: 26px;
+  margin-bottom: 40px;
+}
+
+@font-face {
+  font-family: 'CWDangamAsac-Bold';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/CWDangamAsac-Bold.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'OAGothic-ExtraBold';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.0/OAGothic-ExtraBold.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+}
+
+:root{
+  --main-bg-color:#f7d060;
+  --sub-bg-color: #ffb26b;
+}
+
+
+
+.pageContent {
+  display: flex;
+  width: 20%;
+  margin-top: 30px;
+  cursor: pointer;
+}
+.px50{
+  width: 50px;
+}
+
+
+.px70{
+  width: 70px;
+}
+
+.px95{
+  width: 95px;
+}
+
+.px100{
+  width: 100px;
+}
+
+.px125{
+  width: 125px;
+}
+
+.px150{
+  width: 150px;
+}
+
+.px200{
+  width: 200px;
+}
+
+.px350{
+  width: 350px;
+}

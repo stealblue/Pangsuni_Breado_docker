@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script><!-- json을 쓰기 위한 스크립트 -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script><!-- 제이쿼리를 쓰기 위한 스크립트 -->
+  <script src="https://kit.fontawesome.com/95ba01252b.js" crossorigin="anonymous"></script> <!-- 아이콘 쓰기 위한 스크립트 -->
+  <!-- css 연결 -->
+  <link rel="stylesheet" href="/stylesheets/admin.css"/>
+</head>
+{% block style %}
+{% endblock %} 
+<style>
+  * {
+    list-style: none;
+    text-decoration: none;
+    color: #333;
+    padding: 0;
+    margin: 0 auto;
+    text-align: center;
+  }
+  body{
+    position: relative;
+    margin-bottom: 150px;
+  }
+ 
+  
+  #admin-container {
+    max-width: 90%;
+  }
+
+  #admin-container .admin-title{
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+
+  #admin-container h2 {
+    text-align: center;
+    font-size: 30px;
+    margin-top: 50px;
+  }
+
+  .home{
+    position: absolute;
+    top: 20px;
+    right: 30%
+  }
+  #admin-container .admin-category {
+    display: flex;
+    width: 70%;
+    background-color: #fff;
+    border: 1px solid #333;
+  }
+
+  .admin-category .category {
+    border: 1px solid #999;
+    width: 20%;
+    padding: 10px;
+  }
+  .admin-category .category.active {
+    background-color: #222;
+  }
+
+  .admin-category .category:hover {
+    background-color: #222;
+  }
+
+  .admin-category .category:hover a {
+    color: #fff;
+  }
+
+  .admin-category .category.active a {
+    color: #fff;
+  }
+
+  .admin-category .category a {
+    text-align: center;
+    font-size: 20px;
+    display: block;
+  }
+
+  .pageContent{
+    display: flex;
+    align-items: center;
+    margin-bottom: 40px;
+    margin-top: 50px;
+    width: 20%;
+    cursor: pointer;
+  }
+
+
+  .search{
+      display: none;
+  }
+
+  .top-category{
+      margin-top: -20px;
+  }
+
+.btn{
+    padding: 5px 10px;
+    background-color : transparent;
+    transition: .3s;
+    cursor: pointer;
+  }
+
+.btn:hover{
+    background-color: #333;
+    color: #fff;
+  }
+
+  .px70{
+    width: 70px;
+  }
+
+  .px95{
+    width: 95px;
+  }
+
+  .px100{
+    width: 100px;
+  }
+
+  .px125{
+    width: 125px;
+  }
+
+  .px150{
+    width: 150px;
+  }
+
+  .px200{
+    width: 200px;
+  }
+
+  .px350{
+    width: 350px;
+  }
+
+  i{
+    cursor: pointer;
+  }
+
+  #nav{display: none;}
+footer{
+  width: 100%;
+  height: 200px;
+  background-color: #333;
+  margin-top: 50px;
+}
+.clicked{
+  background-color: steelblue;
+}
+
+#footer{
+  display: none;
+}
+</style>
+<body>
+  <div id="admin-container">
+    <div class="home"><a href="/">홈페이지가기</a></div>
+    <h2 class="admin-title">admin</h2>
+    <ul class="admin-category">
+      <li class="category category1" data-tab="tab-1"><a href="/admin/product">상품관리</a></li>
+      <li class="category category2" data-tab="tab-2"><a href="/admin/member">회원관리</a></li>
+      <li class="category category3" data-tab="tab-3"><a href="/admin/order">주문내역</a></li>
+      <li class="category category4" data-tab="tab-4"><a href="/admin/board">게시판관리</a></li>
+      <li class="category category5" data-tab="tab-5"><a href="/admin/store">store관리</a></li>
+    </ul>
+    {% block body %}
+    {% endblock %}
+
+    {% block script %}
+
+    {% endblock %}
+    <footer id="footer">
+      푸터
+    </footer>
+  </div>
+</body>
+</html>
+

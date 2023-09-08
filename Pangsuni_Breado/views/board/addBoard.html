@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div id="qna-write">
+<form id ="board_form" action="/board/add" method="post">
+
+    <div class="input-group">
+        <label></label>
+        <input name="bt_no" value="{{bt_no}}" readonly type="hidden"><br>
+        <h2>QnA 글쓰기</h2>
+    </div>
+    <div class="input-group">
+        <label>작성자</label>
+        <input name="u_id" value="{{user.u_id}}" readonly><br><br>
+    </div>
+    <div class="input-group">
+        <label>제&nbsp&nbsp&nbsp목</label>
+        <input name="b_title" class="b_title" maxlength="10"><br><br>
+    </div>
+    <div class="input-group">
+        <label class="write-box">내&nbsp&nbsp&nbsp용</label>
+        <div><textarea name="b_content" class="b_content"></textarea></div>
+        <br><br>
+    </div>
+        <p><button type="submit" class="write-btn">등록하기</button></p>
+        <br><br><br>
+</form>
+</div>
+
+{% endblock %}
